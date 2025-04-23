@@ -1,4 +1,7 @@
-﻿using Slangc.NET;
+﻿using System.Diagnostics;
+using Slangc.NET;
+
+Stopwatch stopwatch = Stopwatch.StartNew();
 
 args =
 [
@@ -21,4 +24,8 @@ SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "1";
 
 byte[] linearSpv = SlangCompiler.Compile(args, out _);
 
-Console.ReadKey();
+stopwatch.Stop();
+
+Console.WriteLine($"Compilation Time: {stopwatch.ElapsedMilliseconds} ms");
+Console.WriteLine($"Legacy SPIR-V: {legacySpv.Length} bytes");
+Console.WriteLine($"Linear SPIR-V: {linearSpv.Length} bytes");
