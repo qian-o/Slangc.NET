@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Examples/" Id="6c9f6f23-6752-4a3b-a0a3-7549cda8001d">
+    <Project Path="src/Examples/SlangCompile/SlangCompile.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/Slangc.NET.Native/Slangc.NET.Native.csproj" />
+  <Project Path="src/Slangc.NET/Slangc.NET.csproj" />
+</Solution>
