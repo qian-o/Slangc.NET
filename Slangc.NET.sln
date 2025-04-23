@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slangc.NET", "Slangc.NET\Slangc.NET.csproj", "{51B881AB-6C7B-4298-9F50-278571700CE5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlangCompile", "Examples\SlangCompile\SlangCompile.csproj", "{191EF8DB-0623-4F7B-91C2-24661CC9CDD1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51B881AB-6C7B-4298-9F50-278571700CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51B881AB-6C7B-4298-9F50-278571700CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51B881AB-6C7B-4298-9F50-278571700CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51B881AB-6C7B-4298-9F50-278571700CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{191EF8DB-0623-4F7B-91C2-24661CC9CDD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{191EF8DB-0623-4F7B-91C2-24661CC9CDD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{191EF8DB-0623-4F7B-91C2-24661CC9CDD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{191EF8DB-0623-4F7B-91C2-24661CC9CDD1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{191EF8DB-0623-4F7B-91C2-24661CC9CDD1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6940D9B6-6361-4AE1-A1BE-63B71AF07728}
+	EndGlobalSection
+EndGlobal
