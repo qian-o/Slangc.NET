@@ -15,8 +15,8 @@ SlangCompiler.Error += Console.WriteLine;
 
 SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "0";
 
-byte[] vsNotSrgbToLinear = SlangCompiler.Compile(args, out _);
+byte[] legacySpv = SlangCompiler.Compile(args, out _);
 
 SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "1";
 
-byte[] vsSrgbToLinear = SlangCompiler.Compile(args, out _);
+byte[] linearSpv = SlangCompiler.Compile(args, out _);
