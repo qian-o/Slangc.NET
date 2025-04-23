@@ -1,0 +1,96 @@
+name: Slang Native
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+        with:
+          path: ${{github.workspace}}/CodeSpace
+          
+      - name: Download Native
+        id: download-slang-native
+        uses: robinraju/release-downloader@v1.12
+        with:
+          repository: 'shader-slang/slang'
+          latest: true
+          fileName: '*.zip'
+          out-file-path: 'Native'
+          
+      - name: Copy Native
+        working-directory: ${{github.workspace}}
+        run: |
+          release_name=${{steps.download-slang-native.outputs.release_name}}
+          release_name_no_v=${release_name#v}
+          
+          rm -rf CodeSpace/Slangc.NET/Native
+          mkdir -p CodeSpace/Slangc.NET/Native
+          mv Native/* CodeSpace/Slangc.NET/Native
+          rm -rf Native
+
+          cd CodeSpace/Slangc.NET/Native
+          
+          mv slang-${release_name_no_v}-linux-aarch64.zip linux-arm64.zip
+          unzip -o linux-arm64.zip -d linux-arm64
+          cd linux-arm64
+          mv lib/* .
+          find . -type f -not -name 'libslang.so' | xargs rm -rf
+          find . -type d -not -path '.' -exec rm -rf {} +
+          cd ..
+
+          mv slang-${release_name_no_v}-linux-x86_64.zip linux-x64.zip
+          unzip -o linux-x64.zip -d linux-x64
+          cd linux-x64
+          mv lib/* .
+          find . -type f -not -name 'libslang.so' | xargs rm -rf
+          find . -type d -not -path '.' -exec rm -rf {} +
+          cd ..
+
+          mv slang-${release_name_no_v}-macos-aarch64.zip osx-arm64.zip
+          unzip -o osx-arm64.zip -d osx-arm64
+          cd osx-arm64
+          mv lib/* .
+          find . -type f -not -name 'libslang.dylib' | xargs rm -rf
+          find . -type d -not -path '.' -exec rm -rf {} +
+          cd ..
+
+          mv slang-${release_name_no_v}-macos-x86_64.zip osx-x64.zip
+          unzip -o osx-x64.zip -d osx-x64
+          cd osx-x64
+          mv lib/* .
+          find . -type f -not -name 'libslang.dylib' | xargs rm -rf
+          find . -type d -not -path '.' -exec rm -rf {} +
+          cd ..
+
+          mv slang-${release_name_no_v}-windows-aarch64.zip win-arm64.zip
+          unzip -o win-arm64.zip -d win-arm64
+          cd win-arm64
+          mv bin/* .
+          find . -type f -not -name 'slang.dll' | xargs rm -rf
+          find . -type d -not -path '.' -exec rm -rf {} +
+          cd ..
+
+          mv slang-${release_name_no_v}-windows-x86_64.zip win-x64.zip
+          unzip -o win-x64.zip -d win-x64
+          cd win-x64
+          mv bin/* .
+          find . -type f -not -name 'slang.dll' | xargs rm -rf
+          find . -type d -not -path '.' -exec rm -rf {} +
+          cd ..
+
+          rm -rf *.zip
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          path: ${{github.workspace}}/CodeSpace
+          branch: slang-native-${{steps.download-slang-native.outputs.release_name}}
+          commit-message: 'Update Slang Native to ${{steps.download-slang-native.outputs.release_name}}'
+          title: 'Update Slang Native to ${{steps.download-slang-native.outputs.release_name}}'
+          body: 'This PR updates the Slang Native binaries.'
+          labels: 'update, slang-native'
