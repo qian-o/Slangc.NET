@@ -1,6 +1,5 @@
 ﻿using Slangc.NET;
 
-// Currently, I am not adding the slangc native library in Slangc.NET yet, you can get it by installing Vulkan SDK.
 args =
 [
     Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),

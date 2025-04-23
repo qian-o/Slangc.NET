@@ -28,19 +28,14 @@ jobs:
           release_name=${{steps.download-slang-native.outputs.release_name}}
           release_name_no_v=${release_name#v}
           
-          mv Native/* CodeSpace/src/Slangc.NET.Native
+          rm -rf CodeSpace/native
+          mkdir -p CodeSpace/native
+          mv Native/* CodeSpace/native
           rm -rf Native
 
-          cd CodeSpace/src/Slangc.NET.Native
+          cd CodeSpace/native
 
           mv slang-${release_name_no_v}-linux-aarch64.zip linux-arm64.zip
-          mv slang-${release_name_no_v}-linux-x86_64.zip linux-x64.zip
-          mv slang-${release_name_no_v}-macos-aarch64.zip osx-arm64.zip
-          mv slang-${release_name_no_v}-macos-x86_64.zip osx-x64.zip
-          mv slang-${release_name_no_v}-windows-aarch64.zip win-arm64.zip
-          mv slang-${release_name_no_v}-windows-x86_64.zip win-x64.zip
-          
-          rm -rf linux-arm64
           unzip -o linux-arm64.zip -d linux-arm64
           cd linux-arm64
           mv lib/* .
@@ -48,7 +43,7 @@ jobs:
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
-          rm -rf linux-x64
+          mv slang-${release_name_no_v}-linux-x86_64.zip linux-x64.zip
           unzip -o linux-x64.zip -d linux-x64
           cd linux-x64
           mv lib/* .
@@ -56,7 +51,7 @@ jobs:
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
-          rm -rf osx-arm64
+          mv slang-${release_name_no_v}-macos-aarch64.zip osx-arm64.zip
           unzip -o osx-arm64.zip -d osx-arm64
           cd osx-arm64
           mv lib/* .
@@ -64,7 +59,7 @@ jobs:
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
-          rm -rf osx-x64
+          mv slang-${release_name_no_v}-macos-x86_64.zip osx-x64.zip
           unzip -o osx-x64.zip -d osx-x64
           cd osx-x64
           mv lib/* .
@@ -72,7 +67,7 @@ jobs:
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
-          rm -rf win-arm64
+          mv slang-${release_name_no_v}-windows-aarch64.zip win-arm64.zip
           unzip -o win-arm64.zip -d win-arm64
           cd win-arm64
           mv bin/* .
@@ -80,7 +75,7 @@ jobs:
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
-          rm -rf win-x64
+          mv slang-${release_name_no_v}-windows-x86_64.zip win-x64.zip
           unzip -o win-x64.zip -d win-x64
           cd win-x64
           mv bin/* .

@@ -8,6 +8,5 @@
     <File Path="LICENSE" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="src/Slangc.NET.Native/Slangc.NET.Native.csproj" />
   <Project Path="src/Slangc.NET/Slangc.NET.csproj" />
 </Solution>
