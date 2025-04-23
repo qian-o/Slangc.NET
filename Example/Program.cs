@@ -20,3 +20,5 @@ byte[] legacySpv = SlangCompiler.Compile(args, out _);
 SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "1";
 
 byte[] linearSpv = SlangCompiler.Compile(args, out _);
+
+Console.ReadKey();
