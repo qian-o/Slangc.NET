@@ -8,7 +8,7 @@ The .NET version of slangc, enabling the compilation of Slang code in a .NET env
 ```csharp
 using Slangc.NET;
 
-byte[] buffer = SlangCompiler.Compile(args, out string reflectionJson);
+byte[] buffer = SlangCompiler.Compile(args);
 ```
 
 # Reference

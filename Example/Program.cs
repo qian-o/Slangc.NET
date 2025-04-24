@@ -22,10 +22,11 @@ byte[] legacySpv = SlangCompiler.Compile(args);
 
 SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "1";
 
-byte[] linearSpv = SlangCompiler.Compile(args);
+byte[] linearSpv = SlangCompiler.CompileWithReflection(args, out string? reflectionJson);
 
 stopwatch.Stop();
 
 Console.WriteLine($"Compilation Time: {stopwatch.ElapsedMilliseconds} ms");
 Console.WriteLine($"Legacy SPIR-V: {legacySpv.Length} bytes");
 Console.WriteLine($"Linear SPIR-V: {linearSpv.Length} bytes");
+Console.WriteLine($"Reflection JSON: {reflectionJson}");
