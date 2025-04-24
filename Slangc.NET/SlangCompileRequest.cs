@@ -31,7 +31,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     private static partial nint spGetReflection(nint request);
 
     [LibraryImport("slang")]
-    private static partial SlangResult spReflection_ToJson(nint reflection, nint request, ISlangBlob** outBlob);
+    private static partial SlangResult spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
 
     public nint Handle { get; } = handle;
 
@@ -94,7 +94,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
 
     public string GetReflectionJson()
     {
-        ISlangBlob* outBlob;
+        SlangBlob* outBlob;
 
         spReflection_ToJson(spGetReflection(Handle), Handle, &outBlob);
 
