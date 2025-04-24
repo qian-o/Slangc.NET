@@ -12,4 +12,5 @@ byte[] buffer = SlangCompiler.Compile(args);
 ```
 
 # Reference
+[shader-slang/slang](https://github.com/shader-slang/slang)
 [pema99/SlangUnityPlugin](https://github.com/pema99/SlangUnityPlugin)
