@@ -12,9 +12,32 @@ public static unsafe class SlangCompiler
 
     public static Dictionary<string, string> PreprocessorDefines { get; } = [];
 
-    public static byte[] Compile(string[] args, out string reflectionJson)
+    public static byte[] Compile(params string[] args)
     {
-        using SlangCompileRequest request = session.CreateCompileRequest();
+        using SlangCompileRequest request = CreateCompileRequest(args);
+
+        return request.GetResult();
+    }
+
+    public static byte[] CompileWithReflection(string[] args, out string? reflectionJson)
+    {
+        using SlangCompileRequest request = CreateCompileRequest(args);
+
+        try
+        {
+            reflectionJson = request.GetReflectionJson();
+        }
+        catch (Exception)
+        {
+            reflectionJson = null;
+        }
+
+        return request.GetResult();
+    }
+
+    private static SlangCompileRequest CreateCompileRequest(string[] args)
+    {
+        SlangCompileRequest request = session.CreateCompileRequest();
 
         request.SetDiagnosticCallback(DiagnosticCallback, null);
 
@@ -38,9 +61,7 @@ public static unsafe class SlangCompiler
             throw new Exception("Compilation failed");
         }
 
-        reflectionJson = request.GetReflectionJson();
-
-        return request.GetResult();
+        return request;
     }
 
     private static void DiagnosticCallback(char* message, void* userData)

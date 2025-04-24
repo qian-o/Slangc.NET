@@ -18,11 +18,11 @@ SlangCompiler.Error += Console.WriteLine;
 
 SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "0";
 
-byte[] legacySpv = SlangCompiler.Compile(args, out _);
+byte[] legacySpv = SlangCompiler.Compile(args);
 
 SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "1";
 
-byte[] linearSpv = SlangCompiler.Compile(args, out _);
+byte[] linearSpv = SlangCompiler.Compile(args);
 
 stopwatch.Stop();
 
