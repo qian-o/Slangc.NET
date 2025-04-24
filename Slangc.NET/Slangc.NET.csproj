@@ -16,7 +16,7 @@
         <Authors>qian-o</Authors>
         <Copyright>MIT</Copyright>
         <PackageTags>slang;shader;dxc;shaderc</PackageTags>
-        <Description>The .NET version of the Slang compiler, allowing the compilation of Slang code in a .NET environment..</Description>
+        <Description>The .NET version of the Slang compiler, allowing the compilation of Slang code in a .NET environment.</Description>
         <RepositoryUrl>https://github.com/qian-o/Slangc.NET</RepositoryUrl>
         <PackageProjectUrl>https://github.com/qian-o/Slangc.NET</PackageProjectUrl>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
