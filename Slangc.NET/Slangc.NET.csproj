@@ -12,7 +12,7 @@
 
     <PropertyGroup>
         <Title>$(AssemblyName)</Title>
-        <Version>2025.7.0</Version>
+        <Version>2025.7.1</Version>
         <Authors>qian-o</Authors>
         <Copyright>MIT</Copyright>
         <PackageTags>slang;shader;dxc;shaderc</PackageTags>
