@@ -38,10 +38,7 @@ VSOutput VSMain(VSInput input)
     output.Position = mul(float4(input.Position, 0.0, 1.0), constants.Projection);
     output.UV = input.UV;
     output.Color = input.Color;
-
-#if SRGB_TO_LINEAR
     output.Color.rgb = SrgbToLinear(output.Color.rgb);
-#endif
 
     return output;
 }
