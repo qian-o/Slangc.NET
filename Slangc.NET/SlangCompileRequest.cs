@@ -27,12 +27,6 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     [LibraryImport("slang")]
     private static partial char* spGetCompileRequestCode(nint request, uint* outSize);
 
-    [LibraryImport("slang")]
-    private static partial nint spGetReflection(nint request);
-
-    [LibraryImport("slang")]
-    private static partial SlangResult spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
-
     public nint Handle { get; } = handle;
 
     public void SetDiagnosticCallback(SlangDiagnosticCallback callback, void* userData)
@@ -90,18 +84,6 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
         char* codePtr = spGetCompileRequestCode(Handle, &size);
 
         return [.. new ReadOnlySpan<byte>(codePtr, (int)size)];
-    }
-
-    public string GetReflectionJson()
-    {
-        SlangBlob* outBlob;
-
-        spReflection_ToJson(spGetReflection(Handle), Handle, &outBlob);
-
-        void* buffer = outBlob->GetBufferPointer();
-        ulong size = outBlob->GetBufferSize();
-
-        return Marshal.PtrToStringAnsi((nint)buffer, (int)size);
     }
 
     public void Dispose()

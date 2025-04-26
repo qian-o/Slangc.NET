@@ -14,19 +14,10 @@ args =
     "-fvk-s-shift", "40", "all"
 ];
 
-SlangCompiler.Error += Console.WriteLine;
-
-SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "0";
-
-byte[] legacySpv = SlangCompiler.Compile(args);
-
-SlangCompiler.PreprocessorDefines["SRGB_TO_LINEAR"] = "1";
-
-byte[] linearSpv = SlangCompiler.CompileWithReflection(args, out string? reflectionJson);
+byte[] spv = SlangCompiler.CompileWithReflection(args, out SlangReflection reflection);
 
 stopwatch.Stop();
 
 Console.WriteLine($"Compilation Time: {stopwatch.ElapsedMilliseconds} ms");
-Console.WriteLine($"Legacy SPIR-V: {legacySpv.Length} bytes");
-Console.WriteLine($"Linear SPIR-V: {linearSpv.Length} bytes");
-Console.WriteLine($"Reflection JSON: {reflectionJson}");
+Console.WriteLine($"SPIR-V: {spv.Length} bytes");
+Console.WriteLine($"Reflection JSON: {reflection.Json}");
