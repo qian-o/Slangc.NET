@@ -29,21 +29,22 @@ public static unsafe class SlangCompiler
 
     private static SlangCompileRequest Compile(SlangCompileRequest request, string[] args)
     {
-        StringBuilder stringBuilder = new();
-        GCHandle handle = GCHandle.Alloc(stringBuilder);
+        StringBuilder sb = new();
+
+        GCHandle handle = GCHandle.Alloc(sb);
 
         try
         {
-            request.SetDiagnosticCallback(DiagnosticCallback, null);
+            request.SetDiagnosticCallback(DiagnosticCallback, (void*)(nint)handle);
 
             if (request.ProcessCommandLineArguments(args).IsError)
             {
-                throw new Exception(stringBuilder.ToString());
+                throw new Exception(sb.ToString());
             }
 
             if (request.Compile().IsError)
             {
-                throw new Exception(stringBuilder.ToString());
+                throw new Exception(sb.ToString());
             }
 
             return request;
@@ -56,7 +57,7 @@ public static unsafe class SlangCompiler
 
     private static void DiagnosticCallback(char* message, void* userData)
     {
-        GCHandle handle = GCHandle.FromIntPtr((nint)userData);
+        GCHandle handle = (GCHandle)(nint)userData;
 
         ((StringBuilder)handle.Target!).Append(Marshal.PtrToStringAnsi((nint)message) ?? string.Empty);
     }
