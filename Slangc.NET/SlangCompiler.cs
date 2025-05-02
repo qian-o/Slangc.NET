@@ -37,12 +37,12 @@ public static unsafe class SlangCompiler
         {
             request.SetDiagnosticCallback(DiagnosticCallback, (void*)(nint)handle);
 
-            if (request.ProcessCommandLineArguments(args).IsError)
+            if (request.ProcessCommandLineArguments(args) is not 0)
             {
                 throw new Exception(sb.ToString());
             }
 
-            if (request.Compile().IsError)
+            if (request.Compile() is not 0)
             {
                 throw new Exception(sb.ToString());
             }
