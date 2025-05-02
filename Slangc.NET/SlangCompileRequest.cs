@@ -19,10 +19,10 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     private static partial void spAddPreprocessorDefine(nint request, char* key, char* value);
 
     [LibraryImport("slang")]
-    private static partial SlangResult spProcessCommandLineArguments(nint request, char** args, int argCount);
+    private static partial int spProcessCommandLineArguments(nint request, char** args, int argCount);
 
     [LibraryImport("slang")]
-    private static partial SlangResult spCompile(nint request);
+    private static partial int spCompile(nint request);
 
     [LibraryImport("slang")]
     private static partial char* spGetCompileRequestCode(nint request, uint* outSize);
@@ -54,7 +54,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
         Marshal.FreeHGlobal((nint)valuePtr);
     }
 
-    public SlangResult ProcessCommandLineArguments(string[] args)
+    public int ProcessCommandLineArguments(string[] args)
     {
         char** argsPtr = stackalloc char*[args.Length];
 
@@ -63,7 +63,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
             argsPtr[i] = (char*)Marshal.StringToHGlobalAnsi(args[i]);
         }
 
-        SlangResult result = spProcessCommandLineArguments(Handle, argsPtr, args.Length);
+        int result = spProcessCommandLineArguments(Handle, argsPtr, args.Length);
 
         for (int i = 0; i < args.Length; i++)
         {
@@ -73,7 +73,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
         return result;
     }
 
-    public SlangResult Compile()
+    public int Compile()
     {
         return spCompile(Handle);
     }

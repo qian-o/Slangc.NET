@@ -8,7 +8,7 @@ public unsafe partial class SlangReflection
     private static partial nint spGetReflection(nint request);
 
     [LibraryImport("slang")]
-    private static partial SlangResult spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
+    private static partial int spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
 
     public SlangReflection(nint request)
     {
@@ -20,7 +20,7 @@ public unsafe partial class SlangReflection
         }
 
         SlangBlob* outBlob;
-        if (spReflection_ToJson(reflection, request, &outBlob).IsError)
+        if (spReflection_ToJson(reflection, request, &outBlob) is not 0)
         {
             return;
         }
