@@ -4,10 +4,6 @@ using Slangc.NET.Enums;
 
 namespace Slangc.NET.Models;
 
-/// <summary>
-/// slang-reflection-json.cpp
-/// static void emitReflectionVarBindingInfoJSON(PrettyWriter& writer, SlangParameterCategory category, SlangUInt index, SlangUInt count, SlangUInt space = 0)
-/// </summary>
 public class SlangBinding
 {
     internal SlangBinding(JsonObject reader)
