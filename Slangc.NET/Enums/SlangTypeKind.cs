@@ -2,7 +2,7 @@
 
 public enum SlangTypeKind
 {
-    None,
+    Unknown,
 
     Struct,
 
