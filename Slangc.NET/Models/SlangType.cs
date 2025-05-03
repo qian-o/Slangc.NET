@@ -6,7 +6,6 @@ namespace Slangc.NET.Models;
 /// <summary>
 /// slang-reflection-json.cpp
 /// static void emitReflectionTypeLayoutInfoJSON(PrettyWriter& writer, slang::TypeLayoutReflection* typeLayout)
-/// static void emitReflectionTypeInfoJSON(PrettyWriter& writer, slang::TypeReflection* type)
 /// </summary>
 public class SlangType
 {
@@ -22,10 +21,12 @@ public class SlangType
         ElementType = reader.ContainsKey("elementType") ? new(reader["elementType"]!.AsObject()) : null;
         ScalarType = reader["scalarType"].Deserialize<SlangScalarType>();
         ElementCount = reader["elementCount"].Deserialize<uint>();
+        UniformStride = reader["uniformStride"].Deserialize<uint>();
         RowCount = reader["rowCount"].Deserialize<uint>();
         ColumnCount = reader["columnCount"].Deserialize<uint>();
         TargetType = reader.ContainsKey("targetType") ? new(reader["targetType"]!.AsObject()) : null;
-        Fields = reader.ContainsKey("fields") ? reader["fields"]!.AsArray() : null;
+        ValueType = reader["valueType"]?.Deserialize<string>();
+        Fields = reader.ContainsKey("fields") ? reader["fields"]!.AsArray() : [];
         Name = reader["name"]?.Deserialize<string>();
     }
 
@@ -55,6 +56,8 @@ public class SlangType
 
     #region Kind is Vector or Array
     public uint ElementCount { get; }
+
+    public uint UniformStride { get; }
     #endregion
 
     #region Kind is Matrix
@@ -65,10 +68,12 @@ public class SlangType
 
     #region Kind is Pointer
     public SlangType? TargetType { get; }
+
+    public string? ValueType { get; }
     #endregion
 
     #region Kind is Struct
-    public JsonArray? Fields { get; }
+    public JsonArray Fields { get; }
     #endregion
 
     #region Kind is GenericTypeParameter or Interface or Feedback
