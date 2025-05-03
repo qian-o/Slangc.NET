@@ -5,11 +5,12 @@ namespace Slangc.NET.Models;
 
 /// <summary>
 /// slang-reflection-json.cpp
+/// static void emitReflectionTypeLayoutInfoJSON(PrettyWriter& writer, slang::TypeLayoutReflection* typeLayout)
 /// static void emitReflectionTypeInfoJSON(PrettyWriter& writer, slang::TypeReflection* type)
 /// </summary>
-public class TypeInfo
+public class SlangType
 {
-    internal TypeInfo(JsonObject reader)
+    internal SlangType(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangTypeKind>();
         BaseShape = reader["baseShape"].Deserialize<SlangResourceShape>();
@@ -24,7 +25,7 @@ public class TypeInfo
         RowCount = reader["rowCount"].Deserialize<uint>();
         ColumnCount = reader["columnCount"].Deserialize<uint>();
         TargetType = reader.ContainsKey("targetType") ? new(reader["targetType"]!.AsObject()) : null;
-        Fields = reader.ContainsKey("fields") ? [.. reader["fields"]!.AsArray().Select(static reader => new VarInfo(reader!.AsObject()))] : null;
+        // Fields = reader.ContainsKey("fields") ? [.. reader["fields"]!.AsArray().Select(static reader => new VarInfo(reader!.AsObject()))] : [];
         Name = reader["name"]?.Deserialize<string>();
     }
 
@@ -41,11 +42,11 @@ public class TypeInfo
 
     public SlangResourceAccess Access { get; }
 
-    public TypeInfo? ResultType { get; }
+    public SlangType? ResultType { get; }
     #endregion
 
     #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer or ShaderStorageBuffer or Vector or Matrix or Array
-    public TypeInfo? ElementType { get; }
+    public SlangType? ElementType { get; }
     #endregion
 
     #region Kind is Scalar
@@ -63,11 +64,11 @@ public class TypeInfo
     #endregion
 
     #region Kind is Pointer
-    public TypeInfo? TargetType { get; }
+    public SlangType? TargetType { get; }
     #endregion
 
     #region Kind is Struct
-    public VarInfo[]? Fields { get; }
+    // public VarInfo[] Fields { get; }
     #endregion
 
     #region Kind is GenericTypeParameter or Interface or Feedback
