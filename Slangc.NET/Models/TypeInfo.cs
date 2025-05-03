@@ -12,6 +12,20 @@ public class TypeInfo
     internal TypeInfo(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangTypeKind>();
+        BaseShape = reader["baseShape"].Deserialize<SlangResourceShape>();
+        Array = reader["array"].Deserialize<bool>();
+        Multisample = reader["multisample"].Deserialize<bool>();
+        Feedback = reader["feedback"].Deserialize<bool>();
+        Access = reader["access"].Deserialize<SlangResourceAccess>();
+        ResultType = reader.ContainsKey("resultType") ? new(reader["resultType"]!.AsObject()) : null;
+        ElementType = reader.ContainsKey("elementType") ? new(reader["elementType"]!.AsObject()) : null;
+        ScalarType = reader["scalarType"].Deserialize<SlangScalarType>();
+        ElementCount = reader["elementCount"].Deserialize<uint>();
+        RowCount = reader["rowCount"].Deserialize<uint>();
+        ColumnCount = reader["columnCount"].Deserialize<uint>();
+        TargetType = reader.ContainsKey("targetType") ? new(reader["targetType"]!.AsObject()) : null;
+        Fields = reader.ContainsKey("fields") ? [.. reader["fields"]!.AsArray().Select(static reader => new VarInfo(reader!.AsObject()))] : null;
+        Name = reader["name"]?.Deserialize<string>();
     }
 
     public SlangTypeKind Kind { get; }
