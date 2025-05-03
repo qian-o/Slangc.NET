@@ -12,27 +12,46 @@ public class SlangType
     internal SlangType(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangTypeKind>();
+
+        ElementType = reader.ContainsKey("elementType") ? new(reader["elementType"]!.AsObject()) : null;
+
+        ContainerVarLayout = reader.ContainsKey("containerVarLayout") ? new(reader["containerVarLayout"]!.AsObject()) : null;
+        ElementVarLayout = reader.ContainsKey("elementVarLayout") ? reader["elementVarLayout"]!.AsObject() : null;
+
         BaseShape = reader["baseShape"].Deserialize<SlangResourceShape>();
         Array = reader["array"].Deserialize<bool>();
         Multisample = reader["multisample"].Deserialize<bool>();
         Feedback = reader["feedback"].Deserialize<bool>();
         Access = reader["access"].Deserialize<SlangResourceAccess>();
         ResultType = reader.ContainsKey("resultType") ? new(reader["resultType"]!.AsObject()) : null;
-        ElementType = reader.ContainsKey("elementType") ? new(reader["elementType"]!.AsObject()) : null;
+
         ScalarType = reader["scalarType"].Deserialize<SlangScalarType>();
+
         ElementCount = reader["elementCount"].Deserialize<uint>();
         UniformStride = reader["uniformStride"].Deserialize<uint>();
+
         RowCount = reader["rowCount"].Deserialize<uint>();
         ColumnCount = reader["columnCount"].Deserialize<uint>();
+
         TargetType = reader.ContainsKey("targetType") ? new(reader["targetType"]!.AsObject()) : null;
         ValueType = reader["valueType"]?.Deserialize<string>();
+
         Fields = reader.ContainsKey("fields") ? reader["fields"]!.AsArray() : [];
+
         Name = reader["name"]?.Deserialize<string>();
-        ContainerVarLayout = reader["containerVarLayout"].Deserialize<SlangBinding>();
-        ElementVarLayout = reader.ContainsKey("elementVarLayout") ? reader["elementVarLayout"]!.AsObject() : null;
     }
 
     public SlangTypeKind Kind { get; }
+
+    #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer or ShaderStorageBuffer or Vector or Matrix or Array
+    public SlangType? ElementType { get; }
+    #endregion
+
+    #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer
+    public SlangBinding? ContainerVarLayout { get; }
+
+    public JsonObject? ElementVarLayout { get; }
+    #endregion
 
     #region Kind is Resource
     public SlangResourceShape BaseShape { get; }
@@ -46,10 +65,6 @@ public class SlangType
     public SlangResourceAccess Access { get; }
 
     public SlangType? ResultType { get; }
-    #endregion
-
-    #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer or ShaderStorageBuffer or Vector or Matrix or Array
-    public SlangType? ElementType { get; }
     #endregion
 
     #region Kind is Scalar
@@ -80,11 +95,5 @@ public class SlangType
 
     #region Kind is GenericTypeParameter or Interface or Feedback
     public string? Name { get; }
-    #endregion
-
-    #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer
-    public SlangBinding ContainerVarLayout { get; }
-
-    public JsonObject? ElementVarLayout { get; }
     #endregion
 }
