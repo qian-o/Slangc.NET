@@ -11,6 +11,7 @@ internal static partial class JsonExtensions
     [JsonSerializable(typeof(bool))]
     [JsonSerializable(typeof(string))]
     [JsonSerializable(typeof(SlangTypeKind))]
+    [JsonSerializable(typeof(SlangScalarType))]
     [JsonSerializable(typeof(SlangResourceShape))]
     [JsonSerializable(typeof(SlangResourceAccess))]
     [JsonSerializable(typeof(SlangParameterCategory))]
@@ -18,19 +19,6 @@ internal static partial class JsonExtensions
     internal partial class SourceGenerationContext : JsonSerializerContext;
 
     private static readonly SourceGenerationContext Context = new();
-
-    public static void Foreach(this JsonNode? node, Action<JsonObject> action)
-    {
-        if (node is null || node is not JsonArray array)
-        {
-            return;
-        }
-
-        foreach (JsonNode? item in array)
-        {
-            action(item!.AsObject());
-        }
-    }
 
     public static T Deserialize<T>(this JsonNode? node)
     {

@@ -19,6 +19,13 @@ public class SlangType
         Access = reader["access"].Deserialize<SlangResourceAccess>();
         ResultType = reader.ContainsKey("resultType") ? new SlangType(reader["resultType"]!.AsObject()) : null;
         ElementType = reader.ContainsKey("elementType") ? new SlangType(reader["elementType"]!.AsObject()) : null;
+        ScalarType = reader["scalarType"].Deserialize<SlangScalarType>();
+        ElementCount = reader["elementCount"].Deserialize<uint>();
+        RowCount = reader["rowCount"].Deserialize<uint>();
+        ColumnCount = reader["columnCount"].Deserialize<uint>();
+        TargetType = reader.ContainsKey("targetType") ? new SlangType(reader["targetType"]!.AsObject()) : null;
+        Fields = reader.ContainsKey("fields") ? [.. reader["fields"]!.AsArray().Select(static reader => new SlangVar(reader!.AsObject()))] : null;
+        Name = reader["name"]?.Deserialize<string>();
     }
 
     public SlangTypeKind Kind { get; }
@@ -37,7 +44,33 @@ public class SlangType
     public SlangType? ResultType { get; }
     #endregion
 
-    #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer or ShaderStorageBuffer
+    #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer or ShaderStorageBuffer or Vector or Matrix or Array
     public SlangType? ElementType { get; }
+    #endregion
+
+    #region Kind is Scalar
+    public SlangScalarType ScalarType { get; }
+    #endregion
+
+    #region Kind is Vector or Array
+    public uint ElementCount { get; }
+    #endregion
+
+    #region Kind is Matrix
+    public uint RowCount { get; }
+
+    public uint ColumnCount { get; }
+    #endregion
+
+    #region Kind is Pointer
+    public SlangType? TargetType { get; }
+    #endregion
+
+    #region Kind is Struct
+    public SlangVar[]? Fields { get; }
+    #endregion
+
+    #region Kind is GenericTypeParameter or Interface or Feedback
+    public string? Name { get; }
     #endregion
 }
