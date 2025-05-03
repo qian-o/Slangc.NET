@@ -1,7 +1,7 @@
 ﻿namespace Slangc.NET.Enums;
 
 /// <summary>
-/// https://github.com/shader-slang/slang/blob/master/source/slang/slang-reflection-json.cpp#L423
+/// https://github.com/shader-slang/slang/blob/master/source/slang/slang-reflection-json.cpp
 /// static void emitReflectionResourceTypeBaseInfoJSON(PrettyWriter& writer, slang::TypeReflection* type)
 /// </summary>
 public enum SlangResourceShape
