@@ -37,7 +37,7 @@ internal static partial class JsonExtensions
     [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
     internal partial class SourceGenerationContext : JsonSerializerContext;
 
-    private static readonly SourceGenerationContext Context = new(new()
+    private static readonly SourceGenerationContext context = new(new()
     {
         Converters = { new NumberToBooleanConverter() }
     });
@@ -49,6 +49,6 @@ internal static partial class JsonExtensions
             return default!;
         }
 
-        return (T)node.Deserialize(typeof(T), Context)!;
+        return (T)node.Deserialize(typeof(T), context)!;
     }
 }

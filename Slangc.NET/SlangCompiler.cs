@@ -7,6 +7,8 @@ public static unsafe class SlangCompiler
 {
     private static readonly SlangSession session = new();
 
+    public static bool EnableDeserialization { get; set; }
+
     public static byte[] Compile(params string[] args)
     {
         using SlangCompileRequest request = session.CreateCompileRequest();
