@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Slangc.NET.Models;
 
 namespace Slangc.NET;
@@ -38,6 +39,14 @@ public unsafe partial class SlangReflection
         }
 
         using JsonDocument document = JsonDocument.Parse(Json);
+
+        JsonObject reader = JsonObject.Create(document.RootElement)!;
+
+        List<SlangParameter> parameters = [];
+
+        reader["parameters"]!.Foreach((reader) => parameters.Add(new(reader)));
+
+        Parameters = [.. parameters];
     }
 
     public string Json { get; } = string.Empty;

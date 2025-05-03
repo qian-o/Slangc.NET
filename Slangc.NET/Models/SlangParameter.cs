@@ -4,7 +4,7 @@ namespace Slangc.NET.Models;
 
 public class SlangParameter
 {
-    internal SlangParameter(JsonNode json)
+    internal SlangParameter(JsonObject reader)
     {
     }
 

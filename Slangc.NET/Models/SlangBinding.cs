@@ -5,7 +5,7 @@ namespace Slangc.NET.Models;
 
 public class SlangBinding
 {
-    internal SlangBinding(JsonNode json)
+    internal SlangBinding(JsonObject reader)
     {
     }
 

@@ -5,7 +5,7 @@ namespace Slangc.NET.Models;
 
 public class SlangType
 {
-    internal SlangType(JsonNode json)
+    internal SlangType(JsonObject reader)
     {
     }
 
