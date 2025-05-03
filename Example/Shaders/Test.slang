@@ -1,6 +1,10 @@
 ﻿struct Constants
 {
     float4x4 Projection;
+
+    float4x4 View;
+
+    float4x4 Model;
 };
 
 struct VSInput
@@ -33,9 +37,11 @@ float3 SrgbToLinear(float3 srgb)
 [shader("vertex")]
 VSOutput VSMain(VSInput input)
 {
+    float4x4 mvp = constants.Projection * constants.View * constants.Model;
+
     VSOutput output;
 
-    output.Position = mul(float4(input.Position, 0.0, 1.0), constants.Projection);
+    output.Position = mul(mvp, float4(input.Position, 0.0f, 1.0f));
     output.UV = input.UV;
     output.Color = input.Color;
     output.Color.rgb = SrgbToLinear(output.Color.rgb);
