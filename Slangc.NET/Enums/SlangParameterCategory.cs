@@ -68,7 +68,5 @@ public enum SlangParameterCategory
 
     FragmentOutput,
 
-    CountV1,
-
-    Unknown
+    CountV1
 }

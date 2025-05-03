@@ -12,9 +12,12 @@ public class Parameter
     {
         Name = reader["name"].Deserialize<string>();
         Binding = new(reader["binding"]!.AsObject());
+        Type = new(reader["type"]!.AsObject());
     }
 
     public string Name { get; }
 
     public VarBindingInfo Binding { get; }
+
+    public TypeLayoutInfo Type { get; }
 }
