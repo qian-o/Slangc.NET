@@ -7,7 +7,7 @@ public class SlangType
 {
     public class StructProperties(JsonObject reader)
     {
-        public SlangVar[] Fields { get; } = [.. reader["fields"]!.AsArray().Select(static item => new SlangVar(item!.AsObject()))];
+        public SlangVar[] Fields { get; } = [.. reader["fields"]!.AsArray().Select(static reader => new SlangVar(reader!.AsObject()))];
     }
 
     public class ArrayProperties(JsonObject reader)
