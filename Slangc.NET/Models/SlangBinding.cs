@@ -1,14 +1,33 @@
-﻿using Slangc.NET.Enums;
+﻿using System.Text.Json;
+using System.Text.Json.Nodes;
+using Slangc.NET.Enums;
 
 namespace Slangc.NET.Models;
 
-public class SlangBinding(SlangParameterCategory kind, uint space, uint index, bool used)
+public class SlangBinding
 {
-    public SlangParameterCategory Kind { get; } = kind;
+    internal SlangBinding(JsonObject reader)
+    {
+        Kind = reader["kind"].Deserialize<SlangParameterCategory>();
+        Offset = reader["offset"].Deserialize<uint>();
+        Size = reader["size"].Deserialize<uint>();
+        Space = reader["space"].Deserialize<uint>();
+        Index = reader["index"].Deserialize<uint>();
+        Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? uint.MaxValue : reader["count"].Deserialize<uint>() : 0;
+        Used = reader["used"].Deserialize<bool>();
+    }
 
-    public uint Space { get; } = space;
+    public SlangParameterCategory Kind { get; }
 
-    public uint Index { get; } = index;
+    public uint Offset { get; }
 
-    public bool Used { get; } = used;
+    public uint Size { get; }
+
+    public uint Space { get; }
+
+    public uint Index { get; }
+
+    public uint Count { get; }
+
+    public bool Used { get; }
 }

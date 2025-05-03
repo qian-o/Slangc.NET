@@ -2,7 +2,7 @@
 
 public enum SlangTypeKind
 {
-    None,
+    Unknown,
 
     Struct,
 
@@ -30,17 +30,9 @@ public enum SlangTypeKind
 
     Interface,
 
-    OutputStream,
-
-    MeshOutput,
-
-    Specialized,
-
     Feedback,
 
     Pointer,
 
-    DynamicResource,
-
-    Count
+    DynamicResource
 }

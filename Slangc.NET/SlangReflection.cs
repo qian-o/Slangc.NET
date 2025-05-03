@@ -1,4 +1,7 @@
 ﻿using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using Slangc.NET.Models;
 
 namespace Slangc.NET;
 
@@ -29,7 +32,26 @@ public unsafe partial class SlangReflection
         ulong size = outBlob->GetBufferSize();
 
         Json = Marshal.PtrToStringAnsi((nint)buffer, (int)size) ?? string.Empty;
+
+        if (string.IsNullOrEmpty(Json))
+        {
+            return;
+        }
+
+        if (SlangCompiler.EnableDeserialization)
+        {
+            using JsonDocument document = JsonDocument.Parse(Json);
+
+            JsonObject reader = JsonObject.Create(document.RootElement)!;
+
+            Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
+            EntryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+        }
     }
 
     public string Json { get; } = string.Empty;
+
+    public SlangParameter[] Parameters { get; } = [];
+
+    public SlangEntryPoint[] EntryPoints { get; } = [];
 }
