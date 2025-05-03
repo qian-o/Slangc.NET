@@ -21,9 +21,9 @@ struct VSOutput
     float4 Color : COLOR0;
 };
 
-ConstantBuffer<Constants> constants : register(b0, space0);
-SamplerState sampler0 : register(s0, space0);
-Texture2D texture0 : register(t0, space1);
+uniform Constants constants;
+uniform RWTexture2D texture0;
+uniform SamplerState sampler0;
 
 float3 SrgbToLinear(float3 srgb)
 {
@@ -46,5 +46,5 @@ VSOutput VSMain(VSInput input)
 [shader("pixel")]
 float4 PSMain(VSOutput input) : SV_TARGET
 {
-    return input.Color * texture0.Sample(sampler0, input.UV);
+    return input.Color;
 }
