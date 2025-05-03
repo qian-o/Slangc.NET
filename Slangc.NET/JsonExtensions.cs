@@ -10,7 +10,6 @@ internal static partial class JsonExtensions
     [JsonSerializable(typeof(uint))]
     [JsonSerializable(typeof(bool))]
     [JsonSerializable(typeof(string))]
-    [JsonSerializable(typeof(SlangResourceShape))]
     [JsonSerializable(typeof(SlangParameterCategory))]
     [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
     internal partial class SourceGenerationContext : JsonSerializerContext;
