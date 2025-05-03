@@ -1,10 +1,11 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Text.Json;
+using System.Text.Json.Nodes;
 using Slangc.NET.Enums;
 
 namespace Slangc.NET.Models;
 
 /// <summary>
-/// https://github.com/shader-slang/slang/blob/master/source/slang/slang-reflection-json.cpp
+/// slang-reflection-json.cpp
 /// static void emitReflectionVarBindingInfoJSON(PrettyWriter& writer, SlangParameterCategory category, SlangUInt index, SlangUInt count, SlangUInt space = 0)
 /// </summary>
 public class VarBindingInfo
@@ -16,6 +17,7 @@ public class VarBindingInfo
         Size = reader["size"].Deserialize<uint>();
         Space = reader["space"].Deserialize<uint>();
         Index = reader["index"].Deserialize<uint>();
+        Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? uint.MaxValue : reader["count"].Deserialize<uint>() : 0;
         Used = reader["used"].Deserialize<bool>();
     }
 
@@ -28,6 +30,8 @@ public class VarBindingInfo
     public uint Space { get; }
 
     public uint Index { get; }
+
+    public uint Count { get; }
 
     public bool Used { get; }
 }
