@@ -3,6 +3,9 @@ using Slangc.NET;
 
 Stopwatch stopwatch = Stopwatch.StartNew();
 
+// Whether to enable deserialization of SlangReflection's Json.
+SlangCompiler.EnableDeserialization = true;
+
 args =
 [
     Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),
@@ -18,3 +21,5 @@ stopwatch.Stop();
 Console.WriteLine($"Compilation Time: {stopwatch.ElapsedMilliseconds} ms");
 Console.WriteLine($"SPIR-V: {spv.Length} bytes");
 Console.WriteLine($"Reflection JSON: {reflection.Json}");
+Console.WriteLine($"Reflection Parameters: {reflection.Parameters.Length}");
+Console.WriteLine($"Reflection EntryPoints: {reflection.EntryPoints.Length}");
