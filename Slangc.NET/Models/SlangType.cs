@@ -7,6 +7,7 @@ public class SlangType
 {
     internal SlangType(JsonObject reader)
     {
+        Kind = reader["kind"].Deserialize<SlangTypeKind>();
     }
 
     public SlangTypeKind Kind { get; }
