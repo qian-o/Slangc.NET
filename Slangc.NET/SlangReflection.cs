@@ -44,7 +44,7 @@ public unsafe partial class SlangReflection
 
         List<SlangParameter> parameters = [];
 
-        reader["parameters"]!.Foreach((reader) => parameters.Add(new(reader)));
+        reader["parameters"].Foreach((reader) => parameters.Add(new(reader)));
 
         Parameters = [.. parameters];
     }
