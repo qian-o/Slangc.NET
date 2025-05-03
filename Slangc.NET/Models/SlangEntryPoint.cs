@@ -9,12 +9,12 @@ public class SlangEntryPoint
     {
         Name = reader["name"].Deserialize<string>();
         Stage = reader["stage"].Deserialize<SlangStage>();
-        Bindings = [.. reader["bindings"]!.AsArray().Select(static item => new SlangParameterBinding(item!.AsObject()))];
+        Bindings = [.. reader["bindings"]!.AsArray().Select(static item => new SlangNamedTypeBinding(item!.AsObject()))];
     }
 
     public string Name { get; }
 
     public SlangStage Stage { get; }
 
-    public SlangParameterBinding[] Bindings { get; set; }
+    public SlangNamedTypeBinding[] Bindings { get; set; }
 }

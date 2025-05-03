@@ -2,9 +2,9 @@
 
 namespace Slangc.NET.Models;
 
-public class SlangParameterBinding
+public class SlangNamedTypeBinding
 {
-    internal SlangParameterBinding(JsonObject reader)
+    internal SlangNamedTypeBinding(JsonObject reader)
     {
         Name = reader["name"].Deserialize<string>();
         Binding = new(reader["binding"]!.AsObject());
