@@ -8,7 +8,7 @@ args =
     Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),
     "-profile", "sm_6_6",
     "-matrix-layout-row-major",
-    "-target", "spirv"
+    "-target", "dxil"
 ];
 
 byte[] spv = SlangCompiler.CompileWithReflection(args, out SlangReflection reflection);
