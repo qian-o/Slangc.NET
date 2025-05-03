@@ -11,26 +11,16 @@ internal static partial class JsonEx
 
     private static readonly SourceGenerationContext context = new();
 
-    public static void Foreach(this JsonNode? node, Action<JsonNode?> action)
+    public static void Foreach(this JsonNode node, Action<JsonObject> action)
     {
-        if (node is null)
-        {
-            return;
-        }
-
         foreach (JsonNode? item in node.AsArray())
         {
-            action(item);
+            action(item!.AsObject());
         }
     }
 
-    public static T Deserialize<T>(this JsonNode? node)
+    public static T Deserialize<T>(this JsonNode node)
     {
-        if (node is null)
-        {
-            return default!;
-        }
-
         return (T)node.Deserialize(typeof(T), context)!;
     }
 }
