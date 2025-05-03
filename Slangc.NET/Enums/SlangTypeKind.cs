@@ -30,17 +30,9 @@ public enum SlangTypeKind
 
     Interface,
 
-    OutputStream,
-
-    MeshOutput,
-
-    Specialized,
-
     Feedback,
 
     Pointer,
 
-    DynamicResource,
-
-    Count
+    DynamicResource
 }
