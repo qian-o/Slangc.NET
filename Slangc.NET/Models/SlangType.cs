@@ -25,7 +25,7 @@ public class SlangType
         RowCount = reader["rowCount"].Deserialize<uint>();
         ColumnCount = reader["columnCount"].Deserialize<uint>();
         TargetType = reader.ContainsKey("targetType") ? new(reader["targetType"]!.AsObject()) : null;
-        // Fields = reader.ContainsKey("fields") ? [.. reader["fields"]!.AsArray().Select(static reader => new VarInfo(reader!.AsObject()))] : [];
+        Fields = reader.ContainsKey("fields") ? reader["fields"]!.AsArray() : null;
         Name = reader["name"]?.Deserialize<string>();
     }
 
@@ -68,7 +68,7 @@ public class SlangType
     #endregion
 
     #region Kind is Struct
-    // public VarInfo[] Fields { get; }
+    public JsonArray? Fields { get; }
     #endregion
 
     #region Kind is GenericTypeParameter or Interface or Feedback
