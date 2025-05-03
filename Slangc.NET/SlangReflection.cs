@@ -38,12 +38,15 @@ public unsafe partial class SlangReflection
             return;
         }
 
-        using JsonDocument document = JsonDocument.Parse(Json);
+        if (SlangCompiler.EnableDeserialization)
+        {
+            using JsonDocument document = JsonDocument.Parse(Json);
 
-        JsonObject reader = JsonObject.Create(document.RootElement)!;
+            JsonObject reader = JsonObject.Create(document.RootElement)!;
 
-        Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
-        EntryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+            Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
+            EntryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+        }
     }
 
     public string Json { get; } = string.Empty;
