@@ -6,9 +6,9 @@ namespace Slangc.NET.Models;
 /// slang-reflection-json.cpp
 /// static void emitReflectionParamJSON(PrettyWriter& writer, slang::VariableLayoutReflection* param)
 /// </summary>
-public class Param
+public class Parameter
 {
-    internal Param(JsonObject reader)
+    internal Parameter(JsonObject reader)
     {
         Name = reader["name"].Deserialize<string>();
         Binding = new(reader["binding"]!.AsObject());
