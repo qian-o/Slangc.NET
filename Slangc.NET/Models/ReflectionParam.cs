@@ -6,9 +6,9 @@ namespace Slangc.NET.Models;
 /// https://github.com/shader-slang/slang/blob/master/source/slang/slang-reflection-json.cpp
 /// static void emitReflectionParamJSON(PrettyWriter& writer, slang::VariableLayoutReflection* param)
 /// </summary>
-public class SlangParameter
+public class ReflectionParam
 {
-    internal SlangParameter(JsonObject reader)
+    internal ReflectionParam(JsonObject reader)
     {
         Name = reader["name"].Deserialize<string>();
         Binding = new(reader["binding"]!.AsObject());
@@ -16,5 +16,5 @@ public class SlangParameter
 
     public string Name { get; }
 
-    public SlangBinding Binding { get; }
+    public VarBindingInfo Binding { get; }
 }
