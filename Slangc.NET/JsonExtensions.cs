@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Slangc.NET.Enums;
 
-namespace Slangc.NET.Models;
+namespace Slangc.NET;
 
 internal static partial class JsonExtensions
 {
@@ -11,6 +11,7 @@ internal static partial class JsonExtensions
     [JsonSerializable(typeof(bool))]
     [JsonSerializable(typeof(string))]
     [JsonSerializable(typeof(SlangTypeKind))]
+    [JsonSerializable(typeof(SlangResourceShape))]
     [JsonSerializable(typeof(SlangParameterCategory))]
     [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
     internal partial class SourceGenerationContext : JsonSerializerContext;
