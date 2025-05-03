@@ -2,18 +2,18 @@
 
 namespace Slangc.NET.Models;
 
-public class SlangParameter
+public class SlangVar
 {
-    internal SlangParameter(JsonObject reader)
+    internal SlangVar(JsonObject reader)
     {
         Name = reader["name"].Deserialize<string>();
-        Binding = new(reader["binding"]!.AsObject());
         Type = new(reader["type"]!.AsObject());
+        Binding = reader.ContainsKey("binding") ? new(reader["binding"]!.AsObject()) : null;
     }
 
     public string Name { get; }
 
-    public SlangBinding Binding { get; }
-
     public SlangType Type { get; }
+
+    public SlangBinding? Binding { get; }
 }

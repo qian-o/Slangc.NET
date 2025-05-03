@@ -1,6 +1,10 @@
 ﻿struct Constants
 {
     float4x4 Projection;
+
+    float4x4 View;
+
+    float4x4 Model;
 };
 
 struct VSInput
@@ -21,9 +25,9 @@ struct VSOutput
     float4 Color : COLOR0;
 };
 
-ConstantBuffer<Constants> constants : register(b0, space0);
-SamplerState sampler0 : register(s0, space0);
-Texture2D texture0 : register(t0, space1);
+uniform Constants constants;
+uniform Texture2D texture0;
+uniform SamplerState sampler0;
 
 float3 SrgbToLinear(float3 srgb)
 {
@@ -33,9 +37,11 @@ float3 SrgbToLinear(float3 srgb)
 [shader("vertex")]
 VSOutput VSMain(VSInput input)
 {
+    float4x4 mvp = constants.Projection * constants.View * constants.Model;
+
     VSOutput output;
 
-    output.Position = mul(float4(input.Position, 0.0, 1.0), constants.Projection);
+    output.Position = mul(mvp, float4(input.Position, 0.0f, 1.0f));
     output.UV = input.UV;
     output.Color = input.Color;
     output.Color.rgb = SrgbToLinear(output.Color.rgb);
@@ -46,5 +52,5 @@ VSOutput VSMain(VSInput input)
 [shader("pixel")]
 float4 PSMain(VSOutput input) : SV_TARGET
 {
-    return input.Color * texture0.Sample(sampler0, input.UV);
+    return input.Color;
 }

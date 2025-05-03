@@ -2,69 +2,35 @@
 
 public enum SlangParameterCategory
 {
-    None,
-
-    Unknown = None,
-
-    Mixed,
+    Unknown,
 
     ConstantBuffer,
 
-    MetalBuffer = ConstantBuffer,
-
     ShaderResource,
-
-    MetalTexture = ShaderResource,
 
     UnorderedAccess,
 
     VaryingInput,
 
-    VertexInput = VaryingInput,
-
     VaryingOutput,
-
-    FragmentOutput = VaryingOutput,
 
     SamplerState,
 
-    MetalSampler = SamplerState,
-
     Uniform,
+
+    PushConstantBuffer,
 
     DescriptorTableSlot,
 
     SpecializationConstant,
 
-    PushConstantBuffer,
+    Mixed,
 
     RegisterSpace,
 
-    Generic,
-
-    RayPayload,
-
-    HitAttributes,
-
-    CallablePayload,
-
-    ShaderRecord,
-
-    ExistentialTypeParam,
-
-    ExistentialObjectParam,
-
     SubElementRegisterSpace,
 
-    Subpass,
+    Generic,
 
-    CountV1 = Subpass,
-
-    MetalArgumentBufferElement,
-
-    MetalAttribute,
-
-    MetalPayload,
-
-    Count
+    MetalArgumentBufferElement
 }
