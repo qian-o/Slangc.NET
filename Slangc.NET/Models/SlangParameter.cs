@@ -1,8 +1,16 @@
-﻿namespace Slangc.NET.Models;
+﻿using System.Text.Json.Nodes;
 
-public class SlangParameter(string name, SlangBinding binding)
+namespace Slangc.NET.Models;
+
+public class SlangParameter
 {
-    public string Name { get; } = name;
+    internal SlangParameter(JsonNode json)
+    {
+    }
 
-    public SlangBinding Binding { get; } = binding;
+    public string Name { get; }
+
+    public SlangBinding Binding { get; }
+
+    public SlangType Type { get; }
 }
