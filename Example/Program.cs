@@ -21,5 +21,9 @@ stopwatch.Stop();
 Console.WriteLine($"Compilation Time: {stopwatch.ElapsedMilliseconds} ms");
 Console.WriteLine($"SPIR-V: {spv.Length} bytes");
 Console.WriteLine($"Reflection JSON: {reflection.Json}");
-Console.WriteLine($"Reflection Parameters: {reflection.Parameters.Length}");
-Console.WriteLine($"Reflection EntryPoints: {reflection.EntryPoints.Length}");
+
+if (SlangCompiler.EnableDeserialization)
+{
+    Console.WriteLine($"Reflection Parameters: {reflection.Parameters.Length} items");
+    Console.WriteLine($"Reflection EntryPoints: {reflection.EntryPoints.Length} items");
+}
