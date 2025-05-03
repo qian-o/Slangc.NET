@@ -28,6 +28,8 @@ public class SlangType
         ValueType = reader["valueType"]?.Deserialize<string>();
         Fields = reader.ContainsKey("fields") ? reader["fields"]!.AsArray() : [];
         Name = reader["name"]?.Deserialize<string>();
+        ContainerVarLayout = reader["containerVarLayout"].Deserialize<SlangBinding>();
+        ElementVarLayout = reader.ContainsKey("elementVarLayout") ? reader["elementVarLayout"]!.AsObject() : null;
     }
 
     public SlangTypeKind Kind { get; }
@@ -78,5 +80,11 @@ public class SlangType
 
     #region Kind is GenericTypeParameter or Interface or Feedback
     public string? Name { get; }
+    #endregion
+
+    #region Kind is ConstantBuffer or ParameterBlock or TextureBuffer
+    public SlangBinding ContainerVarLayout { get; }
+
+    public JsonObject? ElementVarLayout { get; }
     #endregion
 }
