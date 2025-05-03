@@ -7,9 +7,9 @@ namespace Slangc.NET.Models;
 /// https://github.com/shader-slang/slang/blob/master/source/slang/slang-reflection-json.cpp
 /// static void emitReflectionVarBindingInfoJSON(PrettyWriter& writer, SlangParameterCategory category, SlangUInt index, SlangUInt count, SlangUInt space = 0)
 /// </summary>
-public class SlangBinding
+public class VarBindingInfo
 {
-    internal SlangBinding(JsonObject reader)
+    internal VarBindingInfo(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangParameterCategory>();
         Offset = reader["offset"].Deserialize<uint>();

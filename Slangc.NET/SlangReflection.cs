@@ -42,10 +42,10 @@ public unsafe partial class SlangReflection
 
         JsonObject reader = JsonObject.Create(document.RootElement)!;
 
-        Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
+        Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new ReflectionParam(reader!.AsObject()))];
     }
 
     public string Json { get; } = string.Empty;
 
-    public SlangParameter[] Parameters { get; } = [];
+    public ReflectionParam[] Parameters { get; } = [];
 }

@@ -1,12 +1,14 @@
 ﻿namespace Slangc.NET.Enums;
 
 /// <summary>
-/// https://github.com/shader-slang/slang/blob/master/source/slang/slang-reflection-json.cpp
-/// static void emitReflectionVarBindingInfoJSON(PrettyWriter& writer, SlangParameterCategory category, SlangUInt index, SlangUInt count, SlangUInt space = 0)
+/// slang.h
+/// enum SlangParameterCategory : SlangParameterCategoryIntegral
 /// </summary>
 public enum SlangParameterCategory
 {
-    Unknown,
+    None,
+
+    Mixed,
 
     ConstantBuffer,
 
@@ -22,19 +24,49 @@ public enum SlangParameterCategory
 
     Uniform,
 
-    PushConstantBuffer,
-
     DescriptorTableSlot,
 
     SpecializationConstant,
 
-    Mixed,
+    PushConstantBuffer,
 
     RegisterSpace,
 
-    SubElementRegisterSpace,
-
     Generic,
 
-    MetalArgumentBufferElement
+    RayPayload,
+
+    HitAttributes,
+
+    CallablePayload,
+
+    ShaderRecord,
+
+    ExistentialTypeParam,
+
+    ExistentialObjectParam,
+
+    SubElementRegisterSpace,
+
+    Subpass,
+
+    MetalArgumentBufferElement,
+
+    MetalAttribute,
+
+    MetalPayload,
+
+    Count,
+
+    MetalBuffer,
+
+    MetalTexture,
+
+    MetalSampler,
+
+    VertexInput,
+
+    FragmentOutput,
+
+    CountV1
 }
