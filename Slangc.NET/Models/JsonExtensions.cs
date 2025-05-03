@@ -5,16 +5,17 @@ using Slangc.NET.Enums;
 
 namespace Slangc.NET.Models;
 
-internal static partial class JsonEx
+internal static partial class JsonExtensions
 {
     [JsonSerializable(typeof(uint))]
     [JsonSerializable(typeof(bool))]
     [JsonSerializable(typeof(string))]
+    [JsonSerializable(typeof(SlangTypeKind))]
     [JsonSerializable(typeof(SlangParameterCategory))]
     [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
     internal partial class SourceGenerationContext : JsonSerializerContext;
 
-    private static readonly SourceGenerationContext context = new();
+    private static readonly SourceGenerationContext Context = new();
 
     public static void Foreach(this JsonNode? node, Action<JsonObject> action)
     {
@@ -36,6 +37,6 @@ internal static partial class JsonEx
             return default!;
         }
 
-        return (T)node.Deserialize(typeof(T), context)!;
+        return (T)node.Deserialize(typeof(T), Context)!;
     }
 }
