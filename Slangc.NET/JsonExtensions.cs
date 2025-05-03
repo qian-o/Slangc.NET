@@ -12,6 +12,7 @@ internal static partial class JsonExtensions
     [JsonSerializable(typeof(string))]
     [JsonSerializable(typeof(SlangTypeKind))]
     [JsonSerializable(typeof(SlangResourceShape))]
+    [JsonSerializable(typeof(SlangResourceAccess))]
     [JsonSerializable(typeof(SlangParameterCategory))]
     [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
     internal partial class SourceGenerationContext : JsonSerializerContext;
