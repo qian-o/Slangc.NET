@@ -3,15 +3,11 @@ using Slangc.NET.Enums;
 
 namespace Slangc.NET.Models;
 
-/// <summary>
-/// slang-reflection-json.cpp
-/// static void emitReflectionTypeLayoutInfoJSON(PrettyWriter& writer, slang::TypeLayoutReflection* typeLayout)
-/// </summary>
 public class SlangType
 {
     public class StructProperties(JsonObject reader)
     {
-        public object Fields { get; } = reader.ContainsKey("fields") ? reader["fields"]!.AsArray() : [];
+        public SlangVar[] Fields { get; } = [.. reader["fields"]!.AsArray().Select(static item => new SlangVar(item!.AsObject()))];
     }
 
     public class ArrayProperties(JsonObject reader)
@@ -67,7 +63,7 @@ public class SlangType
 
         public SlangResourceAccess Access { get; } = reader["access"].Deserialize<SlangResourceAccess>();
 
-        public SlangType? ResultType { get; } = reader.ContainsKey("resultType") ? new(reader["resultType"]!.AsObject()) : null;
+        public SlangType ResultType { get; } = new(reader["resultType"]!.AsObject());
     }
 
     public class TextureBufferProperties(JsonObject reader)
@@ -90,14 +86,14 @@ public class SlangType
 
         public SlangBinding ContainerVarLayout { get; } = new(reader["containerVarLayout"]!.AsObject());
 
-        public object ElementVarLayout { get; } = reader["elementVarLayout"]!.AsObject();
+        public SlangVar ElementVarLayout { get; } = new(reader["elementVarLayout"]!.AsObject());
     }
 
     public class PointerProperties(JsonObject reader)
     {
         public SlangType TargetType { get; } = new(reader["targetType"]!.AsObject());
 
-        public string? ValueType { get; } = reader["valueType"]?.Deserialize<string>();
+        public string ValueType { get; } = reader["valueType"].Deserialize<string>();
     }
 
     public class NamedTypeProperties(JsonObject reader)

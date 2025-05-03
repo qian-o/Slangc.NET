@@ -22,7 +22,7 @@ struct VSOutput
 };
 
 uniform Constants constants;
-uniform RWTexture2D texture0;
+uniform Texture2D texture0;
 uniform SamplerState sampler0;
 
 float3 SrgbToLinear(float3 srgb)
