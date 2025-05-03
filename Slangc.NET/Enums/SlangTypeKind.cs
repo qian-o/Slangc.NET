@@ -1,46 +1,42 @@
 ﻿namespace Slangc.NET.Enums;
 
+/// <summary>
+/// https://github.com/shader-slang/slang/blob/master/source/slang/slang-reflection-json.cpp#L508
+/// static void emitReflectionTypeInfoJSON(PrettyWriter& writer, slang::TypeReflection* type)
+/// </summary>
 public enum SlangTypeKind
 {
-    None,
+    Unknown,
 
-    Struct,
-
-    Array,
-
-    Matrix,
-
-    Vector,
-
-    Scalar,
-
-    ConstantBuffer,
+    SamplerState,
 
     Resource,
 
-    SamplerState,
+    ConstantBuffer,
+
+    ParameterBlock,
 
     TextureBuffer,
 
     ShaderStorageBuffer,
 
-    ParameterBlock,
+    Scalar,
+
+    Vector,
+
+    Matrix,
+
+    Array,
+
+    Pointer,
+
+    Struct,
 
     GenericTypeParameter,
 
     Interface,
 
-    OutputStream,
-
-    MeshOutput,
-
-    Specialized,
-
     Feedback,
 
-    Pointer,
-
-    DynamicResource,
-
-    Count
+    DynamicResource
 }
