@@ -10,6 +10,7 @@ internal static partial class JsonExtensions
     [JsonSerializable(typeof(uint))]
     [JsonSerializable(typeof(bool))]
     [JsonSerializable(typeof(string))]
+    [JsonSerializable(typeof(SlangStage))]
     [JsonSerializable(typeof(SlangTypeKind))]
     [JsonSerializable(typeof(SlangScalarType))]
     [JsonSerializable(typeof(SlangResourceShape))]
