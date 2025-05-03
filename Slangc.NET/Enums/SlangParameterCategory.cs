@@ -2,33 +2,25 @@
 
 public enum SlangParameterCategory
 {
-    None,
-
-    Unknown = None,
+    Unknown,
 
     Mixed,
 
     ConstantBuffer,
 
-    MetalBuffer = ConstantBuffer,
-
     ShaderResource,
-
-    MetalTexture = ShaderResource,
 
     UnorderedAccess,
 
     VaryingInput,
 
-    VertexInput = VaryingInput,
-
     VaryingOutput,
 
-    FragmentOutput = VaryingOutput,
+    VertexInput,
+
+    FragmentOutput,
 
     SamplerState,
-
-    MetalSampler = SamplerState,
 
     Uniform,
 
@@ -58,13 +50,19 @@ public enum SlangParameterCategory
 
     Subpass,
 
-    CountV1 = Subpass,
-
     MetalArgumentBufferElement,
 
     MetalAttribute,
 
     MetalPayload,
 
-    Count
+    MetalBuffer,
+
+    MetalTexture,
+
+    MetalSampler,
+
+    Count,
+
+    CountV1
 }
