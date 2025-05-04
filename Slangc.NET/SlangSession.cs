@@ -17,7 +17,7 @@ public unsafe partial class SlangSession : IDisposable
 
     public SlangCompileRequest CreateCompileRequest()
     {
-        return new SlangCompileRequest(spCreateCompileRequest(Handle));
+        return new(spCreateCompileRequest(Handle));
     }
 
     public void Dispose()

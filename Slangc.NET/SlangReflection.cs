@@ -28,17 +28,9 @@ public unsafe partial class SlangReflection
             return;
         }
 
-        void* buffer = outBlob->GetBufferPointer();
-        ulong size = outBlob->GetBufferSize();
+        Json = Marshal.PtrToStringAnsi((nint)outBlob->GetBufferPointer(), (int)outBlob->GetBufferSize()) ?? string.Empty;
 
-        Json = Marshal.PtrToStringAnsi((nint)buffer, (int)size) ?? string.Empty;
-
-        if (string.IsNullOrEmpty(Json))
-        {
-            return;
-        }
-
-        if (SlangCompiler.EnableDeserialization)
+        if (SlangCompiler.EnableDeserialization && !string.IsNullOrEmpty(Json))
         {
             using JsonDocument document = JsonDocument.Parse(Json);
 
