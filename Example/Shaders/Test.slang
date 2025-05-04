@@ -52,5 +52,5 @@ VSOutput VSMain(VSInput input)
 [shader("pixel")]
 float4 PSMain(VSOutput input) : SV_TARGET
 {
-    return input.Color;
+    return input.Color * texture0.Sample(sampler0, input.UV);
 }
