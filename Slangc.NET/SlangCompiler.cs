@@ -22,7 +22,7 @@ public static unsafe class SlangCompiler
 
         Compile(request, args);
 
-        reflection = new(request.Handle);
+        reflection = new(request.Handle, true);
 
         return request.GetResult();
     }
