@@ -13,7 +13,7 @@ public unsafe partial class SlangReflection
     [LibraryImport("slang")]
     private static partial int spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
 
-    public SlangReflection(nint request, bool parseJson = true)
+    public SlangReflection(nint request, bool parseJson)
     {
         nint reflection = spGetReflection(request);
 
