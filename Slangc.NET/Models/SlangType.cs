@@ -48,7 +48,7 @@ public class SlangType
 
         public SlangBinding ContainerVarLayout { get; } = new(reader["containerVarLayout"]!.AsObject());
 
-        public object ElementVarLayout { get; } = reader["elementVarLayout"]!.AsObject();
+        public SlangVar ElementVarLayout { get; } = new(reader["elementVarLayout"]!.AsObject());
     }
 
     public class ResourceProperties(JsonObject reader)
@@ -63,7 +63,7 @@ public class SlangType
 
         public SlangResourceAccess Access { get; } = reader["access"].Deserialize<SlangResourceAccess>();
 
-        public SlangType ResultType { get; } = new(reader["resultType"]!.AsObject());
+        public SlangType? ResultType { get; } = reader.ContainsKey("resultType") ? new(reader["resultType"]!.AsObject()) : null;
     }
 
     public class TextureBufferProperties(JsonObject reader)
@@ -72,7 +72,7 @@ public class SlangType
 
         public SlangBinding ContainerVarLayout { get; } = new(reader["containerVarLayout"]!.AsObject());
 
-        public object ElementVarLayout { get; } = reader["elementVarLayout"]!.AsObject();
+        public SlangVar ElementVarLayout { get; } = new(reader["elementVarLayout"]!.AsObject());
     }
 
     public class ShaderStorageBufferProperties(JsonObject reader)
