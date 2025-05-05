@@ -13,7 +13,7 @@ public unsafe partial class SlangReflection
     [LibraryImport("slang")]
     private static partial int spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
 
-    public SlangReflection(nint request)
+    public SlangReflection(nint request, bool parseJson = true)
     {
         nint reflection = spGetReflection(request);
 
@@ -30,7 +30,7 @@ public unsafe partial class SlangReflection
 
         Json = Marshal.PtrToStringAnsi((nint)outBlob->GetBufferPointer(), (int)outBlob->GetBufferSize()) ?? string.Empty;
 
-        if (SlangCompiler.EnableDeserialization && !string.IsNullOrEmpty(Json))
+        if (parseJson && !string.IsNullOrEmpty(Json))
         {
             using JsonDocument document = JsonDocument.Parse(Json);
 
