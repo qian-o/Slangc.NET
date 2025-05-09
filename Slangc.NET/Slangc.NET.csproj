@@ -7,10 +7,9 @@
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <IsTrimmable>True</IsTrimmable>
         <IsAotCompatible>True</IsAotCompatible>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
 
-    <PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <Title>$(AssemblyName)</Title>
         <Version>2025.8.0</Version>
         <Authors>qian-o</Authors>
@@ -21,6 +20,7 @@
         <PackageProjectUrl>https://github.com/qian-o/Slangc.NET</PackageProjectUrl>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
