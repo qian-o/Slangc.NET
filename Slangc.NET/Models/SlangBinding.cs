@@ -6,6 +6,8 @@ namespace Slangc.NET.Models;
 
 public class SlangBinding
 {
+    public const uint Unbounded = uint.MaxValue;
+
     internal SlangBinding(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangParameterCategory>();
@@ -13,7 +15,7 @@ public class SlangBinding
         Size = reader["size"].Deserialize<uint>();
         Space = reader["space"].Deserialize<uint>();
         Index = reader["index"].Deserialize<uint>();
-        Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? uint.MaxValue : reader["count"].Deserialize<uint>() : 1;
+        Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? Unbounded : reader["count"].Deserialize<uint>() : 1;
         Used = !reader.ContainsKey("used") || reader["used"].Deserialize<bool>();
     }
 
