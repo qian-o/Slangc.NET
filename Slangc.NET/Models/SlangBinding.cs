@@ -14,7 +14,7 @@ public class SlangBinding
         Space = reader["space"].Deserialize<uint>();
         Index = reader["index"].Deserialize<uint>();
         Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? uint.MaxValue : reader["count"].Deserialize<uint>() : 1;
-        Used = reader["used"].Deserialize<bool>();
+        Used = !reader.ContainsKey("used") || reader["used"].Deserialize<bool>();
     }
 
     public SlangParameterCategory Kind { get; }
