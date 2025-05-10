@@ -13,7 +13,7 @@ public class SlangBinding
         Size = reader["size"].Deserialize<uint>();
         Space = reader["space"].Deserialize<uint>();
         Index = reader["index"].Deserialize<uint>();
-        Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? 0 : reader["count"].Deserialize<uint>() : 1;
+        Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? uint.MaxValue : reader["count"].Deserialize<uint>() : 1;
         Used = reader["used"].Deserialize<bool>();
     }
 
