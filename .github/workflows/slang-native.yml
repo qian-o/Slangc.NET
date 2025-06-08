@@ -39,7 +39,7 @@ jobs:
           unzip -o linux-arm64.zip -d linux-arm64
           cd linux-arm64
           mv lib/* .
-          find . -type f -not -name 'libslang.so' | xargs rm -rf
+          find . -type f -not -name 'libslang.so' -not -name 'libslang-glslang.so' | xargs rm -rf
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
@@ -47,7 +47,7 @@ jobs:
           unzip -o linux-x64.zip -d linux-x64
           cd linux-x64
           mv lib/* .
-          find . -type f -not -name 'libslang.so' | xargs rm -rf
+          find . -type f -not -name 'libslang.so' -not -name 'libslang-glslang.so' | xargs rm -rf
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
@@ -55,7 +55,7 @@ jobs:
           unzip -o osx-arm64.zip -d osx-arm64
           cd osx-arm64
           mv lib/* .
-          find . -type f -not -name 'libslang.dylib' | xargs rm -rf
+          find . -type f -not -name 'libslang.dylib' -not -name 'libslang-glslang.dylib' | xargs rm -rf
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
@@ -63,7 +63,7 @@ jobs:
           unzip -o osx-x64.zip -d osx-x64
           cd osx-x64
           mv lib/* .
-          find . -type f -not -name 'libslang.dylib' | xargs rm -rf
+          find . -type f -not -name 'libslang.dylib' -not -name 'libslang-glslang.dylib' | xargs rm -rf
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
@@ -71,7 +71,7 @@ jobs:
           unzip -o win-arm64.zip -d win-arm64
           cd win-arm64
           mv bin/* .
-          find . -type f -not -name 'slang.dll' | xargs rm -rf
+          find . -type f -not -name 'slang.dll' -not -name 'slang-glslang.dll' | xargs rm -rf
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
@@ -79,7 +79,7 @@ jobs:
           unzip -o win-x64.zip -d win-x64
           cd win-x64
           mv bin/* .
-          find . -type f -not -name 'slang.dll' | xargs rm -rf
+          find . -type f -not -name 'slang.dll' -not -name 'slang-glslang.dll' | xargs rm -rf
           find . -type d -not -path '.' -exec rm -rf {} +
           cd ..
 
