@@ -32,6 +32,8 @@ struct Block
     Texture2D Texture;
 
     SamplerState Sampler;
+
+    RWTexture2D<float4> OutputTexture;
 };
 
 uniform ParameterBlock<Block> block;
@@ -60,4 +62,11 @@ VSOutput VSMain(VSInput input)
 float4 PSMain(VSOutput input) : SV_TARGET
 {
     return input.Color * block.Texture.Sample(block.Sampler, input.UV);
+}
+
+[shader("compute")]
+[numthreads(8, 8, 1)]
+void CSMain(uint3 DTid : SV_DispatchThreadID)
+{
+    block.OutputTexture[DTid.xy] = float4(1.0f, 0.0f, 0.0f, 1.0f);
 }

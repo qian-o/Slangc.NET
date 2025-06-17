@@ -10,6 +10,15 @@ public class SlangEntryPoint
         Name = reader["name"].Deserialize<string>();
         Stage = reader["stage"].Deserialize<SlangStage>();
         Bindings = [.. reader["bindings"]!.AsArray().Select(static reader => new SlangNamedTypeBinding(reader!.AsObject()))];
+
+        if (Stage is SlangStage.Compute)
+        {
+            ThreadGroupSize = [.. reader["threadGroupSize"]!.AsArray().Select(static reader => reader!.GetValue<uint>())];
+        }
+        else
+        {
+            ThreadGroupSize = [];
+        }
     }
 
     public string Name { get; }
@@ -17,4 +26,6 @@ public class SlangEntryPoint
     public SlangStage Stage { get; }
 
     public SlangNamedTypeBinding[] Bindings { get; set; }
+
+    public uint[] ThreadGroupSize { get; set; }
 }
