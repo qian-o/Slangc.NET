@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 
-namespace Slangc.NET.Models;
+namespace Slangc.NET;
 
 public class SlangVar
 {

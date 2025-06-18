@@ -1,8 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
-using Slangc.NET.Enums;
 
-namespace Slangc.NET.Models;
+namespace Slangc.NET;
 
 public class SlangBinding
 {

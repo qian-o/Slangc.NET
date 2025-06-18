@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Nodes;
-using Slangc.NET.Enums;
 
-namespace Slangc.NET.Models;
+namespace Slangc.NET;
 
 public class SlangType
 {
