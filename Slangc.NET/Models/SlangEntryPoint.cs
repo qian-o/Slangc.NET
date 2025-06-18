@@ -8,7 +8,7 @@ public class SlangEntryPoint
     {
         Name = reader["name"].Deserialize<string>();
         Stage = reader["stage"].Deserialize<SlangStage>();
-        ThreadGroupSize = reader.ContainsKey("threadGroupSize") ? [.. reader["threadGroupSize"]!.AsArray().Select(static reader => reader!.GetValue<uint>())] : [];
+        ThreadGroupSize = reader.ContainsKey("threadGroupSize") ? [.. reader["threadGroupSize"]!.AsArray().Select(static reader => reader!.Deserialize<uint>())] : [];
         Bindings = [.. reader["bindings"]!.AsArray().Select(static reader => new SlangNamedTypeBinding(reader!.AsObject()))];
     }
 

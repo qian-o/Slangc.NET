@@ -5,7 +5,8 @@ Stopwatch stopwatch = Stopwatch.StartNew();
 
 args =
 [
-    Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),
+    // Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),
+    @"C:\Users\13247\Downloads\test.slang",
     "-profile", "sm_6_6",
     "-matrix-layout-row-major",
     "-target", "spirv"
