@@ -7,6 +7,7 @@
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <IsTrimmable>True</IsTrimmable>
         <IsAotCompatible>True</IsAotCompatible>
+        <NoWarn>IDE0130</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">

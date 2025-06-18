@@ -1,4 +1,4 @@
-﻿namespace Slangc.NET.Enums;
+﻿namespace Slangc.NET;
 
 public enum SlangTypeKind
 {
