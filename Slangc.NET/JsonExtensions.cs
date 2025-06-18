@@ -24,6 +24,7 @@ internal static partial class JsonExtensions
         }
     }
 
+    [JsonSerializable(typeof(object))]
     [JsonSerializable(typeof(uint))]
     [JsonSerializable(typeof(bool))]
     [JsonSerializable(typeof(string))]
