@@ -1,4 +1,16 @@
-﻿struct Constants
+﻿[__AttributeUsage(_AttributeTargets.Var)]
+struct DragFloatAttribute
+{
+    string Description;
+
+    float MinValue;
+
+    float MaxValue;
+
+    float Speed;
+};
+
+struct Constants
 {
     float4x4 Projection;
 
@@ -38,6 +50,9 @@ struct Block
 
 uniform ParameterBlock<Block> block;
 
+[DragFloat("Gamma", 0.0, 3.0, 0.1)]
+uniform float Gamma;
+
 float3 SrgbToLinear(float3 srgb)
 {
     return srgb * (srgb * (srgb * 0.305306011 + 0.682171111) + 0.012522878);
@@ -66,7 +81,7 @@ float4 PSMain(VSOutput input) : SV_TARGET
 
 [shader("compute")]
 [numthreads(8, 8, 1)]
-void CSMain(uint3 DTid : SV_DispatchThreadID)
+void CSMain(uint3 DTid: SV_DispatchThreadID)
 {
     block.OutputTexture[DTid.xy] = float4(1.0f, 0.0f, 0.0f, 1.0f);
 }
