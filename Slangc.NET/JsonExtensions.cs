@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace Slangc.NET;
 
+/// <summary>
+/// Internal JSON extensions for deserializing reflection data with proper type conversion.
+/// </summary>
 internal static partial class JsonExtensions
 {
     private class NumberToBooleanConverter : JsonConverter<bool>
