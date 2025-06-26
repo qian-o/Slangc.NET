@@ -12,7 +12,7 @@
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <Title>$(AssemblyName)</Title>
-        <Version>2025.10.4</Version>
+        <Version>2025.11.0</Version>
         <Authors>qian-o</Authors>
         <Copyright>MIT</Copyright>
         <PackageTags>slang;shader;dxc;shaderc</PackageTags>
