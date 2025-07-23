@@ -12,7 +12,40 @@ public static unsafe class SlangCompiler
     /// <summary>
     /// Shared Slang session instance used for all compilation requests.
     /// </summary>
-    private static readonly SlangSession session = new();
+    private static readonly SlangSession session;
+
+    static SlangCompiler()
+    {
+        string architecture = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
+
+        if (OperatingSystem.IsWindows())
+        {
+            string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native");
+
+            NativeLibrary.Load(Path.Combine(runtimePath, "slang-glslang.dll"));
+            NativeLibrary.Load(Path.Combine(runtimePath, "slang.dll"));
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native");
+
+            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.so"));
+            NativeLibrary.Load(Path.Combine(runtimePath, "libslang.so"));
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native");
+
+            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.dylib"));
+            NativeLibrary.Load(Path.Combine(runtimePath, "libslang.dylib"));
+        }
+        else
+        {
+            throw new PlatformNotSupportedException("Slangc.NET is not supported on this platform.");
+        }
+
+        session = new();
+    }
 
     /// <summary>
     /// Compiles Slang shader code with the specified command line arguments.
