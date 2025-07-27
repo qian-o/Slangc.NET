@@ -38,5 +38,15 @@ public enum SlangStage
     /// <summary>
     /// Compute shader stage - general purpose parallel computation.
     /// </summary>
-    Compute
+    Compute,
+
+    /// <summary>
+    /// Mesh shader stage - processes mesh primitives and can generate new geometry.
+    /// </summary>
+    Mesh,
+
+    /// <summary>
+    /// Amplification shader stage - used in advanced rendering techniques to control mesh generation and amplification.
+    /// </summary>
+    Amplification
 }

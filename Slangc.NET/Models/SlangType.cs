@@ -7,35 +7,17 @@ namespace Slangc.NET;
 /// </summary>
 public class SlangType
 {
-    /// <summary>
-    /// Properties specific to struct types.
-    /// </summary>
     public class StructProperties(JsonObject reader)
     {
-        /// <summary>
-        /// Gets the array of fields in the struct.
-        /// </summary>
         public SlangVar[] Fields { get; } = [.. reader["fields"]!.AsArray().Select(static reader => new SlangVar(reader!.AsObject()))];
     }
 
-    /// <summary>
-    /// Properties specific to array types.
-    /// </summary>
     public class ArrayProperties(JsonObject reader)
     {
-        /// <summary>
-        /// Gets the number of elements in the array.
-        /// </summary>
         public uint ElementCount { get; } = reader["elementCount"].Deserialize<uint>();
 
-        /// <summary>
-        /// Gets the uniform stride between array elements in bytes.
-        /// </summary>
         public uint UniformStride { get; } = reader["uniformStride"].Deserialize<uint>();
 
-        /// <summary>
-        /// Gets the type of elements in the array.
-        /// </summary>
         public SlangType ElementType { get; } = new(reader["elementType"]!.AsObject());
     }
 
@@ -80,6 +62,8 @@ public class SlangType
         public bool Multisample { get; } = reader["multisample"].Deserialize<bool>();
 
         public bool Feedback { get; } = reader["feedback"].Deserialize<bool>();
+
+        public bool Combined { get; } = reader["combined"].Deserialize<bool>();
 
         public SlangResourceAccess Access { get; } = reader["access"].Deserialize<SlangResourceAccess>();
 
@@ -163,7 +147,6 @@ public class SlangType
             case SlangTypeKind.GenericTypeParameter:
             case SlangTypeKind.Interface:
             case SlangTypeKind.Feedback:
-            case SlangTypeKind.DynamicResource:
                 NamedType = new(reader);
                 break;
         }

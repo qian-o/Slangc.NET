@@ -88,5 +88,25 @@ public enum SlangTypeKind
     /// <summary>
     /// Dynamic resource type for bindless resources.
     /// </summary>
-    DynamicResource
+    DynamicResource,
+
+    /// <summary>
+    /// Output stream type for shader outputs.
+    /// </summary>
+    OutputStream,
+
+    /// <summary>
+    /// Mesh output type for mesh shaders.
+    /// </summary>
+    MeshOutput,
+
+    /// <summary>
+    /// Specialized type for specific use cases, such as specialization constants.
+    /// </summary>
+    Specialized,
+
+    /// <summary>
+    /// No specific type, used for cases where the type is not applicable or not defined.
+    /// </summary>
+    None = Unknown
 }
