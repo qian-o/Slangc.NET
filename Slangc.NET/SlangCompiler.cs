@@ -16,6 +16,8 @@ public static unsafe class SlangCompiler
 
     static SlangCompiler()
     {
+        NativeLibrary.TryLoad("dxcompiler", out _);
+
         string architecture = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
 
         if (OperatingSystem.IsWindows())
@@ -24,8 +26,6 @@ public static unsafe class SlangCompiler
 
             NativeLibrary.Load(Path.Combine(runtimePath, "slang-glslang.dll"));
             NativeLibrary.Load(Path.Combine(runtimePath, "slang.dll"));
-
-            NativeLibrary.TryLoad("dxcompiler", out _);
         }
         else if (OperatingSystem.IsLinux())
         {
