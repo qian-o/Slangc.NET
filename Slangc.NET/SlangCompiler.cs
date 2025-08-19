@@ -24,6 +24,8 @@ public static unsafe class SlangCompiler
 
             NativeLibrary.Load(Path.Combine(runtimePath, "slang-glslang.dll"));
             NativeLibrary.Load(Path.Combine(runtimePath, "slang.dll"));
+
+            NativeLibrary.TryLoad("dxcompiler", out _);
         }
         else if (OperatingSystem.IsLinux())
         {
