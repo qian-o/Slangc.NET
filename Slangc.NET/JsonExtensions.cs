@@ -52,6 +52,13 @@ internal static partial class JsonExtensions
             return default!;
         }
 
-        return (T)node.Deserialize(typeof(T), context)!;
+        try
+        {
+            return (T)node.Deserialize(typeof(T), context)!;
+        }
+        catch (Exception)
+        {
+            return default!;
+        }
     }
 }
