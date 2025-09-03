@@ -15,7 +15,7 @@ public class SlangParameter
     {
         Name = reader["name"].Deserialize<string>();
         UserAttributes = reader.ContainsKey("userAttribs") ? [.. reader["userAttribs"]!.AsArray().Select(static reader => new SlangUserAttribute(reader!.AsObject()))] : [];
-        Binding = new(reader["binding"]!.AsObject());
+        Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : [new(reader["binding"]!.AsObject())];
         Type = new(reader["type"]!.AsObject());
     }
 
@@ -30,9 +30,9 @@ public class SlangParameter
     public SlangUserAttribute[] UserAttributes { get; }
 
     /// <summary>
-    /// Gets the binding information for this parameter, including binding set and register numbers.
+    /// Gets the array of binding points for this parameter, if it spans multiple bindings (e.g., arrays of resources).
     /// </summary>
-    public SlangBinding Binding { get; }
+    public SlangBinding[] Bindings { get; }
 
     /// <summary>
     /// Gets the type information for this parameter, including its structure and properties.

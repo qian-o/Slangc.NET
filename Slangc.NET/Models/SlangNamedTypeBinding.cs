@@ -14,7 +14,7 @@ public class SlangNamedTypeBinding
     internal SlangNamedTypeBinding(JsonObject reader)
     {
         Name = reader["name"].Deserialize<string>();
-        Binding = new(reader["binding"]!.AsObject());
+        Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : [new(reader["binding"]!.AsObject())];
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ public class SlangNamedTypeBinding
     public string Name { get; }
 
     /// <summary>
-    /// Gets the binding information for this named type.
+    /// Gets the array of binding points for this named type, if it spans multiple bindings (e.g., arrays of resources).
     /// </summary>
-    public SlangBinding Binding { get; }
+    public SlangBinding[] Bindings { get; }
 }
