@@ -1,4 +1,4 @@
-name: Slang Native
+﻿name: Slang Native
 
 on:
   workflow_dispatch:
