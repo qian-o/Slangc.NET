@@ -77,7 +77,7 @@ public static unsafe class SlangCompiler
 
         Compile(request, args);
 
-        reflection = new(request.Handle, true);
+        reflection = new(request.Handle);
 
         return request.GetResult();
     }

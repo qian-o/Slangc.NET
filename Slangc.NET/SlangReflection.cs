@@ -32,8 +32,7 @@ public unsafe partial class SlangReflection
     /// Initializes a new instance of the SlangReflection class from a compile request.
     /// </summary>
     /// <param name="request">Handle to the compile request to extract reflection from</param>
-    /// <param name="parseJson">Whether to parse the JSON reflection data into structured objects</param>
-    public SlangReflection(nint request, bool parseJson)
+    public SlangReflection(nint request)
     {
         nint reflection = spGetReflection(request);
 
@@ -49,16 +48,6 @@ public unsafe partial class SlangReflection
         }
 
         Json = Marshal.PtrToStringAnsi((nint)outBlob->GetBufferPointer(), (int)outBlob->GetBufferSize()) ?? string.Empty;
-
-        if (parseJson && !string.IsNullOrEmpty(Json))
-        {
-            using JsonDocument document = JsonDocument.Parse(Json);
-
-            JsonObject reader = JsonObject.Create(document.RootElement)!;
-
-            Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
-            EntryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
-        }
     }
 
     /// <summary>
@@ -70,11 +59,34 @@ public unsafe partial class SlangReflection
     /// Gets the array of shader parameters parsed from the reflection data.
     /// This includes uniform buffers, textures, samplers, and other binding resources.
     /// </summary>
-    public SlangParameter[] Parameters { get; } = [];
+    public SlangParameter[] Parameters { get; private set; } = [];
 
     /// <summary>
     /// Gets the array of entry points parsed from the reflection data.
     /// Each entry point represents a shader stage (vertex, fragment, compute, etc.).
     /// </summary>
-    public SlangEntryPoint[] EntryPoints { get; } = [];
+    public SlangEntryPoint[] EntryPoints { get; private set; } = [];
+
+    public void Deserialize()
+    {
+        if (string.IsNullOrEmpty(Json))
+        {
+            return;
+        }
+
+        try
+        {
+            using JsonDocument document = JsonDocument.Parse(Json);
+
+            JsonObject reader = JsonObject.Create(document.RootElement)!;
+
+            Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
+            EntryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+        }
+        catch (Exception)
+        {
+            Parameters = [];
+            EntryPoints = [];
+        }
+    }
 }

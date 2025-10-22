@@ -95,9 +95,7 @@ public class SlangType
 
     public class PointerProperties(JsonObject reader)
     {
-        public SlangType TargetType { get; } = new(reader["targetType"]!.AsObject());
-
-        public string ValueType { get; } = reader["valueType"].Deserialize<string>();
+        public string ValueType { get; } = reader["valueType"]!.Deserialize<string>();
     }
 
     public class NamedTypeProperties(JsonObject reader)
