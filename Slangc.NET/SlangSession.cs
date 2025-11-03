@@ -13,14 +13,14 @@ public unsafe partial class SlangSession : IDisposable
     /// </summary>
     /// <param name="lpString">Optional configuration string for the session</param>
     /// <returns>Handle to the created Slang session</returns>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial nint spCreateSession(char* lpString);
 
     /// <summary>
     /// Native function to destroy a Slang session.
     /// </summary>
     /// <param name="session">Handle to the Slang session to destroy</param>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial void spDestroySession(nint session);
 
     /// <summary>
@@ -28,7 +28,7 @@ public unsafe partial class SlangSession : IDisposable
     /// </summary>
     /// <param name="session">Handle to the Slang session</param>
     /// <returns>Handle to the created compile request</returns>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial nint spCreateCompileRequest(nint session);
 
     /// <summary>

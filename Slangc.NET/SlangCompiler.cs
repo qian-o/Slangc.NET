@@ -25,21 +25,21 @@ public static unsafe class SlangCompiler
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native");
 
             NativeLibrary.Load(Path.Combine(runtimePath, "slang-glslang.dll"));
-            NativeLibrary.Load(Path.Combine(runtimePath, "slang.dll"));
+            NativeLibrary.Load(Path.Combine(runtimePath, "slang-compiler.dll"));
         }
         else if (OperatingSystem.IsLinux())
         {
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native");
 
             NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.so"));
-            NativeLibrary.Load(Path.Combine(runtimePath, "libslang.so"));
+            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.so"));
         }
         else if (OperatingSystem.IsMacOS())
         {
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native");
 
             NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.dylib"));
-            NativeLibrary.Load(Path.Combine(runtimePath, "libslang.dylib"));
+            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.dylib"));
         }
         else
         {

@@ -19,7 +19,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// Native function to destroy a compile request.
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial void spDestroyCompileRequest(nint request);
 
     /// <summary>
@@ -28,7 +28,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="request">Handle to the compile request</param>
     /// <param name="callback">Pointer to the callback function</param>
     /// <param name="userData">Pointer to user data passed to the callback</param>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial void spSetDiagnosticCallback(nint request, void* callback, void* userData);
 
     /// <summary>
@@ -36,7 +36,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
     /// <param name="path">Pointer to the path string</param>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial void spAddSearchPath(nint request, char* path);
 
     /// <summary>
@@ -45,7 +45,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="request">Handle to the compile request</param>
     /// <param name="key">Pointer to the define key string</param>
     /// <param name="value">Pointer to the define value string</param>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial void spAddPreprocessorDefine(nint request, char* key, char* value);
 
     /// <summary>
@@ -55,7 +55,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="args">Pointer to array of argument strings</param>
     /// <param name="argCount">Number of arguments</param>
     /// <returns>Result code (0 for success)</returns>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial int spProcessCommandLineArguments(nint request, char** args, int argCount);
 
     /// <summary>
@@ -63,7 +63,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
     /// <returns>Result code (0 for success)</returns>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial int spCompile(nint request);
 
     /// <summary>
@@ -72,7 +72,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="request">Handle to the compile request</param>
     /// <param name="outSize">Pointer to receive the output size</param>
     /// <returns>Pointer to the compiled bytecode</returns>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial char* spGetCompileRequestCode(nint request, uint* outSize);
 
     /// <summary>

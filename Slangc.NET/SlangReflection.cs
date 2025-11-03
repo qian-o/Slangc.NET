@@ -15,7 +15,7 @@ public unsafe partial class SlangReflection
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
     /// <returns>Handle to the reflection data</returns>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial nint spGetReflection(nint request);
 
     /// <summary>
@@ -25,7 +25,7 @@ public unsafe partial class SlangReflection
     /// <param name="request">Handle to the compile request</param>
     /// <param name="outBlob">Pointer to receive the output blob containing JSON data</param>
     /// <returns>Result code (0 for success)</returns>
-    [LibraryImport("slang")]
+    [LibraryImport("slang-compiler")]
     private static partial int spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
 
     /// <summary>
