@@ -26,7 +26,7 @@ public static unsafe class SlangCompiler
         {
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native");
 
-            NativeLibrary.Load(Path.Combine(runtimePath, "slang-glslang.dll"));
+            LoadSlangGlslang(runtimePath);
 
             slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "slang-compiler.dll"));
         }
@@ -34,7 +34,7 @@ public static unsafe class SlangCompiler
         {
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native");
 
-            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.so"));
+            LoadSlangGlslang(runtimePath);
 
             slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.so"));
         }
@@ -42,7 +42,7 @@ public static unsafe class SlangCompiler
         {
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native");
 
-            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.dylib"));
+            LoadSlangGlslang(runtimePath);
 
             slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.dylib"));
         }
@@ -54,6 +54,19 @@ public static unsafe class SlangCompiler
         NativeLibrary.SetDllImportResolver(typeof(SlangCompiler).Assembly, (_, _, _) => slangCompiler);
 
         session = new();
+
+        static void LoadSlangGlslang(string runtimePath)
+        {
+            foreach (string file in Directory.GetFiles(runtimePath))
+            {
+                if (Path.GetFileName(file).Contains("slang-glslang", StringComparison.OrdinalIgnoreCase))
+                {
+                    NativeLibrary.Load(file);
+
+                    break;
+                }
+            }
+        }
     }
 
     /// <summary>
