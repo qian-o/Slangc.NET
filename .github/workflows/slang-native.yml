@@ -39,48 +39,48 @@ jobs:
           unzip -o linux-arm64.zip -d linux-arm64
           cd linux-arm64
           mv lib/* .
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           find . -type d -not -path '.' -exec rm -rf {} +
+          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           cd ..
 
           mv slang-${release_name_no_v}-linux-x86_64.zip linux-x64.zip
           unzip -o linux-x64.zip -d linux-x64
           cd linux-x64
           mv lib/* .
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           find . -type d -not -path '.' -exec rm -rf {} +
+          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           cd ..
 
           mv slang-${release_name_no_v}-macos-aarch64.zip osx-arm64.zip
           unzip -o osx-arm64.zip -d osx-arm64
           cd osx-arm64
           mv lib/* .
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           find . -type d -not -path '.' -exec rm -rf {} +
+          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           cd ..
 
           mv slang-${release_name_no_v}-macos-x86_64.zip osx-x64.zip
           unzip -o osx-x64.zip -d osx-x64
           cd osx-x64
           mv lib/* .
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           find . -type d -not -path '.' -exec rm -rf {} +
+          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
           cd ..
 
           mv slang-${release_name_no_v}-windows-aarch64.zip win-arm64.zip
           unzip -o win-arm64.zip -d win-arm64
           cd win-arm64
           mv bin/* .
-          ls -1 | grep -v -E '^slang-(compiler|glslang)' | xargs -r rm -f
           find . -type d -not -path '.' -exec rm -rf {} +
+          ls -1 | grep -v -E '^slang-(compiler|glslang)' | xargs -r rm -f
           cd ..
 
           mv slang-${release_name_no_v}-windows-x86_64.zip win-x64.zip
           unzip -o win-x64.zip -d win-x64
           cd win-x64
           mv bin/* .
-          ls -1 | grep -v -E '^slang-(compiler|glslang)' | xargs -r rm -f
           find . -type d -not -path '.' -exec rm -rf {} +
+          ls -1 | grep -v -E '^slang-(compiler|glslang)' | xargs -r rm -f
           cd ..
 
           rm -rf *.zip
