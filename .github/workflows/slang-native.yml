@@ -40,7 +40,10 @@ jobs:
           cd linux-arm64
           mv lib/* .
           find . -type d -not -path '.' -exec rm -rf {} +
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
+          ls -1 | grep -v -E '^libslang-compiler\.so\.0\.' | grep -v -E '^libslang-glslang-.*\.so$' | xargs -r rm -f
+          # Rename files to remove version suffix
+          for f in libslang-compiler.so.0.*; do [ -f "$f" ] && mv "$f" libslang-compiler.so; done
+          for f in libslang-glslang-*.so; do [ -f "$f" ] && mv "$f" libslang-glslang.so; done
           cd ..
 
           mv slang-${release_name_no_v}-linux-x86_64.zip linux-x64.zip
@@ -48,7 +51,10 @@ jobs:
           cd linux-x64
           mv lib/* .
           find . -type d -not -path '.' -exec rm -rf {} +
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
+          ls -1 | grep -v -E '^libslang-compiler\.so\.0\.' | grep -v -E '^libslang-glslang-.*\.so$' | xargs -r rm -f
+          # Rename files to remove version suffix
+          for f in libslang-compiler.so.0.*; do [ -f "$f" ] && mv "$f" libslang-compiler.so; done
+          for f in libslang-glslang-*.so; do [ -f "$f" ] && mv "$f" libslang-glslang.so; done
           cd ..
 
           mv slang-${release_name_no_v}-macos-aarch64.zip osx-arm64.zip
@@ -56,7 +62,10 @@ jobs:
           cd osx-arm64
           mv lib/* .
           find . -type d -not -path '.' -exec rm -rf {} +
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
+          ls -1 | grep -v -E '^libslang-compiler\.0\..*\.dylib$' | grep -v -E '^libslang-glslang-.*\.dylib$' | xargs -r rm -f
+          # Rename files to remove version suffix
+          for f in libslang-compiler.0.*.dylib; do [ -f "$f" ] && mv "$f" libslang-compiler.dylib; done
+          for f in libslang-glslang-*.dylib; do [ -f "$f" ] && mv "$f" libslang-glslang.dylib; done
           cd ..
 
           mv slang-${release_name_no_v}-macos-x86_64.zip osx-x64.zip
@@ -64,7 +73,10 @@ jobs:
           cd osx-x64
           mv lib/* .
           find . -type d -not -path '.' -exec rm -rf {} +
-          ls -1 | grep -v -E '^libslang-(compiler|glslang)' | xargs -r rm -f
+          ls -1 | grep -v -E '^libslang-compiler\.0\..*\.dylib$' | grep -v -E '^libslang-glslang-.*\.dylib$' | xargs -r rm -f
+          # Rename files to remove version suffix
+          for f in libslang-compiler.0.*.dylib; do [ -f "$f" ] && mv "$f" libslang-compiler.dylib; done
+          for f in libslang-glslang-*.dylib; do [ -f "$f" ] && mv "$f" libslang-glslang.dylib; done
           cd ..
 
           mv slang-${release_name_no_v}-windows-aarch64.zip win-arm64.zip
@@ -72,7 +84,7 @@ jobs:
           cd win-arm64
           mv bin/* .
           find . -type d -not -path '.' -exec rm -rf {} +
-          ls -1 | grep -v -E '^slang-(compiler|glslang)' | xargs -r rm -f
+          ls -1 | grep -v -E '^slang-compiler\.dll$' | grep -v -E '^slang-glslang\.dll$' | xargs -r rm -f
           cd ..
 
           mv slang-${release_name_no_v}-windows-x86_64.zip win-x64.zip
@@ -80,7 +92,7 @@ jobs:
           cd win-x64
           mv bin/* .
           find . -type d -not -path '.' -exec rm -rf {} +
-          ls -1 | grep -v -E '^slang-(compiler|glslang)' | xargs -r rm -f
+          ls -1 | grep -v -E '^slang-compiler\.dll$' | grep -v -E '^slang-glslang\.dll$' | xargs -r rm -f
           cd ..
 
           rm -rf *.zip

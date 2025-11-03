@@ -16,6 +16,8 @@ public static unsafe class SlangCompiler
 
     static SlangCompiler()
     {
+        nint slangCompiler;
+
         NativeLibrary.TryLoad("dxcompiler", out _);
 
         string architecture = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
@@ -25,26 +27,31 @@ public static unsafe class SlangCompiler
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native");
 
             NativeLibrary.Load(Path.Combine(runtimePath, "slang-glslang.dll"));
-            NativeLibrary.Load(Path.Combine(runtimePath, "slang-compiler.dll"));
+
+            slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "slang-compiler.dll"));
         }
         else if (OperatingSystem.IsLinux())
         {
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native");
 
             NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.so"));
-            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.so"));
+
+            slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.so"));
         }
         else if (OperatingSystem.IsMacOS())
         {
             string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native");
 
             NativeLibrary.Load(Path.Combine(runtimePath, "libslang-glslang.dylib"));
-            NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.dylib"));
+
+            slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.dylib"));
         }
         else
         {
             throw new PlatformNotSupportedException("Slangc.NET is not supported on this platform.");
         }
+
+        NativeLibrary.SetDllImportResolver(typeof(SlangCompiler).Assembly, (_, _, _) => slangCompiler);
 
         session = new();
     }
