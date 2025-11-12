@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -12,7 +12,7 @@
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <Title>$(AssemblyName)</Title>
-        <Version>2025.21.1</Version>
+        <Version>2025.22.0</Version>
         <Authors>qian-o</Authors>
         <Copyright>MIT</Copyright>
         <PackageTags>slang;shader;dxc;shaderc</PackageTags>
