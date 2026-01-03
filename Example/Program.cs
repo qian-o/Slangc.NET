@@ -10,7 +10,7 @@ args =
     "-matrix-layout-row-major",
     "-entry","VSMain", "-stage", "vertex",
     "-entry","PSMain", "-stage", "pixel",
-    "-target", "hlsl"
+    "-target", "spirv"
 ];
 
 byte[] spv = SlangCompiler.CompileWithReflection(args, out SlangReflection reflection);
