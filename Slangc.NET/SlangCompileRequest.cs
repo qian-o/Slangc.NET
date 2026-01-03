@@ -67,6 +67,16 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     private static partial int spCompile(nint request);
 
     /// <summary>
+    /// Native function to get the compiled code for a specific entry point.
+    /// </summary>
+    /// <param name="request">Handle to the compile request</param>
+    /// <param name="entryPointIndex">Index of the entry point</param>
+    /// <param name="outSize">Pointer to receive the output size</param>
+    /// <returns>Pointer to the compiled code</returns>
+    [LibraryImport("slang-compiler")]
+    private static partial char* spGetEntryPointCode(nint request, int entryPointIndex, uint* outSize);
+
+    /// <summary>
     /// Native function to get the compiled result.
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
@@ -159,9 +169,33 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     public byte[] GetResult()
     {
         uint size;
-        char* codePtr = spGetCompileRequestCode(Handle, &size);
+        spGetEntryPointCode(Handle, 0, &size);
 
-        return [.. new ReadOnlySpan<byte>(codePtr, (int)size)];
+        if (size is not 0)
+        {
+            List<byte> codes = [];
+
+            int i = 0;
+            while (true)
+            {
+                char* codePtr = spGetEntryPointCode(Handle, i++, &size);
+
+                if (size is 0)
+                {
+                    break;
+                }
+
+                codes.AddRange(new ReadOnlySpan<byte>(codePtr, (int)size));
+            }
+
+            return [.. codes];
+        }
+        else
+        {
+            char* codePtr = spGetCompileRequestCode(Handle, &size);
+
+            return [.. new ReadOnlySpan<byte>(codePtr, (int)size)];
+        }
     }
 
     /// <summary>
