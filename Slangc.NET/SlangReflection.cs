@@ -59,19 +59,35 @@ public unsafe partial class SlangReflection
     /// Gets the array of shader parameters parsed from the reflection data.
     /// This includes uniform buffers, textures, samplers, and other binding resources.
     /// </summary>
-    public SlangParameter[] Parameters { get; private set; } = [];
+    public SlangParameter[] Parameters
+    {
+        get
+        {
+            field ??= Deserialize().Parameters;
+
+            return field;
+        }
+    }
 
     /// <summary>
     /// Gets the array of entry points parsed from the reflection data.
     /// Each entry point represents a shader stage (vertex, fragment, compute, etc.).
     /// </summary>
-    public SlangEntryPoint[] EntryPoints { get; private set; } = [];
+    public SlangEntryPoint[] EntryPoints
+    {
+        get
+        {
+            field ??= Deserialize().EntryPoints;
 
-    public void Deserialize()
+            return field;
+        }
+    }
+
+    private (SlangParameter[] Parameters, SlangEntryPoint[] EntryPoints) Deserialize()
     {
         if (string.IsNullOrEmpty(Json))
         {
-            return;
+            return ([], []);
         }
 
         try
@@ -80,13 +96,15 @@ public unsafe partial class SlangReflection
 
             JsonObject reader = JsonObject.Create(document.RootElement)!;
 
-            Parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
-            EntryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+            return
+            (
+                [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))],
+                [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))]
+            );
         }
         catch (Exception)
         {
-            Parameters = [];
-            EntryPoints = [];
+            return ([], []);
         }
     }
 }
