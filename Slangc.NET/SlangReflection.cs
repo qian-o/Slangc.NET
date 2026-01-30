@@ -28,6 +28,8 @@ public unsafe partial class SlangReflection
     [LibraryImport("slang-compiler")]
     private static partial int spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
 
+    private readonly Lazy<(SlangParameter[] Parameters, SlangEntryPoint[] EntryPoints)>? deserialized;
+
     /// <summary>
     /// Initializes a new instance of the SlangReflection class from a compile request.
     /// </summary>
@@ -48,6 +50,27 @@ public unsafe partial class SlangReflection
         }
 
         Json = Marshal.PtrToStringAnsi((nint)outBlob->GetBufferPointer(), (int)outBlob->GetBufferSize()) ?? string.Empty;
+
+        deserialized = new(() =>
+        {
+            SlangParameter[] parameters = [];
+            SlangEntryPoint[] entryPoints = [];
+
+            try
+            {
+                using JsonDocument document = JsonDocument.Parse(Json);
+
+                JsonObject reader = JsonObject.Create(document.RootElement)!;
+
+                parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
+                entryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+            }
+            catch
+            {
+            }
+
+            return (parameters, entryPoints);
+        });
     }
 
     /// <summary>
@@ -59,52 +82,11 @@ public unsafe partial class SlangReflection
     /// Gets the array of shader parameters parsed from the reflection data.
     /// This includes uniform buffers, textures, samplers, and other binding resources.
     /// </summary>
-    public SlangParameter[] Parameters
-    {
-        get
-        {
-            field ??= Deserialize().Parameters;
-
-            return field;
-        }
-    }
+    public SlangParameter[] Parameters => deserialized?.Value.Parameters ?? [];
 
     /// <summary>
     /// Gets the array of entry points parsed from the reflection data.
     /// Each entry point represents a shader stage (vertex, fragment, compute, etc.).
     /// </summary>
-    public SlangEntryPoint[] EntryPoints
-    {
-        get
-        {
-            field ??= Deserialize().EntryPoints;
-
-            return field;
-        }
-    }
-
-    private (SlangParameter[] Parameters, SlangEntryPoint[] EntryPoints) Deserialize()
-    {
-        if (string.IsNullOrEmpty(Json))
-        {
-            return ([], []);
-        }
-
-        try
-        {
-            using JsonDocument document = JsonDocument.Parse(Json);
-
-            JsonObject reader = JsonObject.Create(document.RootElement)!;
-
-            return
-            (
-                [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))],
-                [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))]
-            );
-        }
-        catch (Exception)
-        {
-            return ([], []);
-        }
-    }
+    public SlangEntryPoint[] EntryPoints => deserialized?.Value.EntryPoints ?? [];
 }
