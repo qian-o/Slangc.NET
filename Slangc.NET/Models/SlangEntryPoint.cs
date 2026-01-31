@@ -15,6 +15,7 @@ public class SlangEntryPoint
     {
         Name = reader["name"].Deserialize<string>();
         Stage = reader["stage"].Deserialize<SlangStage>();
+        Parameters = reader.ContainsKey("parameters") ? [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))] : [];
         ThreadGroupSize = reader.ContainsKey("threadGroupSize") ? [.. reader["threadGroupSize"]!.AsArray().Select(static reader => reader!.Deserialize<uint>())] : [];
         Bindings = [.. reader["bindings"]!.AsArray().Select(static reader => new SlangNamedTypeBinding(reader!.AsObject()))];
     }
@@ -28,6 +29,11 @@ public class SlangEntryPoint
     /// Gets the shader stage this entry point represents (vertex, fragment, compute, etc.).
     /// </summary>
     public SlangStage Stage { get; }
+
+    /// <summary>
+    /// Gets the parameters associated with this entry point.
+    /// </summary>
+    public SlangParameter[] Parameters { get; set; }
 
     /// <summary>
     /// Gets the thread group size for compute shaders (if applicable).
