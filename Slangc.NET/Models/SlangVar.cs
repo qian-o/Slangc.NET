@@ -16,6 +16,7 @@ public class SlangVar
         Name = reader["name"].Deserialize<string>();
         Type = new(reader["type"]!.AsObject());
         Binding = reader.ContainsKey("binding") ? new(reader["binding"]!.AsObject()) : null;
+        SemanticName = reader.ContainsKey("semanticName") ? reader["semanticName"].Deserialize<string>() : null;
     }
 
     /// <summary>
@@ -33,4 +34,10 @@ public class SlangVar
     /// May be null for variables that don't have explicit bindings.
     /// </summary>
     public SlangBinding? Binding { get; }
+
+    /// <summary>
+    /// Gets the semantic name associated with this variable, if it has one.
+    /// This is typically used for shader input/output variables that are associated with specific semantics (e.g., POSITION, NORMAL, TEXCOORD).
+    /// </summary>
+    public string? SemanticName { get; }
 }
