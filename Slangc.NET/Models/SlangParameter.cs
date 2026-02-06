@@ -17,6 +17,7 @@ public class SlangParameter
         UserAttributes = reader.ContainsKey("userAttribs") ? [.. reader["userAttribs"]!.AsArray().Select(static reader => new SlangUserAttribute(reader!.AsObject()))] : [];
         Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : [new(reader["binding"]!.AsObject())];
         Type = new(reader["type"]!.AsObject());
+        SemanticName = reader.ContainsKey("semanticName") ? reader["semanticName"].Deserialize<string>() : null;
     }
 
     /// <summary>
@@ -38,4 +39,10 @@ public class SlangParameter
     /// Gets the type information for this parameter, including its structure and properties.
     /// </summary>
     public SlangType Type { get; }
+
+    /// <summary>
+    /// Gets the semantic name associated with this parameter, if it has one.
+    /// This is typically used for shader input/output parameters that are associated with specific semantics (e.g., POSITION, NORMAL, TEXCOORD).
+    /// </summary>
+    public string? SemanticName { get; }
 }
