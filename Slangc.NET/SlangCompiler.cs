@@ -33,9 +33,12 @@ public static unsafe class SlangCompiler
         {
             if (!NativeLibrary.TryLoad("libslang-compiler.so", out slangCompiler))
             {
-                string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native");
+                if (!NativeLibrary.TryLoad(Path.Combine(Directory.GetCurrentDirectory(), "libslang-compiler.so"), out slangCompiler))
+                {
+                    string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native");
 
-                slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.so"));
+                    slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.so"));
+                }
             }
         }
         else if (OperatingSystem.IsMacOS())
