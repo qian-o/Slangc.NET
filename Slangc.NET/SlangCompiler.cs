@@ -22,30 +22,15 @@ public static unsafe class SlangCompiler
 
         if (OperatingSystem.IsWindows())
         {
-            if (!NativeLibrary.TryLoad("slang-compiler.dll", out slangCompiler))
-            {
-                string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native");
-
-                slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "slang-compiler.dll"));
-            }
+            slangCompiler = NativeLibrary.Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native", "slang-compiler.dll"));
         }
         else if (OperatingSystem.IsLinux())
         {
-            if (!NativeLibrary.TryLoad("libslang-compiler.so", out slangCompiler))
-            {
-                string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native");
-
-                slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.so"));
-            }
+            slangCompiler = NativeLibrary.Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native", "libslang-compiler.so"));
         }
         else if (OperatingSystem.IsMacOS())
         {
-            if (!NativeLibrary.TryLoad("libslang-compiler.dylib", out slangCompiler))
-            {
-                string runtimePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native");
-
-                slangCompiler = NativeLibrary.Load(Path.Combine(runtimePath, "libslang-compiler.dylib"));
-            }
+            slangCompiler = NativeLibrary.Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native", "libslang-compiler.dylib"));
         }
         else
         {
