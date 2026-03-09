@@ -1,25 +1,30 @@
 ﻿using System.Diagnostics;
 using Slangc.NET;
 
-Stopwatch stopwatch = Stopwatch.StartNew();
+string[] targetArgs = ["hlsl", "glsl", "dxil", "spirv"];
 
-args =
-[
-    Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),
-    "-profile", "sm_6_6",
-    "-matrix-layout-row-major",
-    "-entry","VSMain", "-stage", "vertex",
-    "-entry","PSMain", "-stage", "pixel",
-    "-target", "spirv"
-];
+foreach (string target in targetArgs)
+{
+    Stopwatch stopwatch = Stopwatch.StartNew();
 
-byte[] spv = SlangCompiler.CompileWithReflection(args, out SlangReflection reflection);
+    args =
+    [
+        Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),
+        "-profile", "sm_6_6",
+        "-matrix-layout-row-major",
+        "-entry","VSMain", "-stage", "vertex",
+        "-entry","PSMain", "-stage", "pixel",
+        "-target", target
+    ];
 
-stopwatch.Stop();
+    byte[] shader = SlangCompiler.CompileWithReflection(args, out SlangReflection reflection);
 
-Console.WriteLine($"Compilation Time: {stopwatch.ElapsedMilliseconds} ms");
-Console.WriteLine($"SPIR-V: {spv.Length} bytes");
-Console.WriteLine($"Reflection JSON: {reflection.Json}");
+    stopwatch.Stop();
 
-Console.WriteLine($"Reflection Parameters: {reflection.Parameters.Length} items");
-Console.WriteLine($"Reflection EntryPoints: {reflection.EntryPoints.Length} items");
+    Console.WriteLine($"Target: {target}");
+    Console.WriteLine($"Compilation Time: {stopwatch.ElapsedMilliseconds} ms");
+    Console.WriteLine($"Length: {shader.Length} bytes");
+    Console.WriteLine($"Reflection Parameters: {reflection.Parameters.Length} items");
+    Console.WriteLine($"Reflection EntryPoints: {reflection.EntryPoints.Length} items");
+    Console.WriteLine();
+}
