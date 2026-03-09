@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using Slangc.NET;
 
-string[] targetArgs = ["hlsl", "glsl", "dxil", "spirv"];
+string[] targets = ["hlsl", "glsl", "dxil", "spirv"];
 
-foreach (string target in targetArgs)
+foreach (string target in targets)
 {
     Stopwatch stopwatch = Stopwatch.StartNew();
 
