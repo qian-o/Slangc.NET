@@ -22,15 +22,21 @@ public static unsafe class SlangCompiler
 
         if (OperatingSystem.IsWindows())
         {
-            slangCompiler = NativeLibrary.Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native", "slang-compiler.dll"));
+            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native", "slang-compiler.dll"),
+                                 Path.Combine(AppContext.BaseDirectory, "slang-compiler.dll"),
+                                 "slang-compiler.dll");
         }
         else if (OperatingSystem.IsLinux())
         {
-            slangCompiler = NativeLibrary.Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native", "libslang-compiler.so"));
+            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native", "libslang-compiler.so"),
+                                 Path.Combine(AppContext.BaseDirectory, "libslang-compiler.so"),
+                                 "libslang-compiler.so");
         }
         else if (OperatingSystem.IsMacOS())
         {
-            slangCompiler = NativeLibrary.Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native", "libslang-compiler.dylib"));
+            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native", "libslang-compiler.dylib"),
+                                 Path.Combine(AppContext.BaseDirectory, "libslang-compiler.dylib"),
+                                 "libslang-compiler.dylib");
         }
         else
         {
@@ -40,6 +46,19 @@ public static unsafe class SlangCompiler
         NativeLibrary.SetDllImportResolver(typeof(SlangCompiler).Assembly, (_, _, _) => slangCompiler);
 
         session = new();
+
+        static nint Load(params string[] paths)
+        {
+            foreach (string path in paths)
+            {
+                if (File.Exists(path) && NativeLibrary.TryLoad(path, out nint handle))
+                {
+                    return handle;
+                }
+            }
+
+            return 0;
+        }
     }
 
     /// <summary>
