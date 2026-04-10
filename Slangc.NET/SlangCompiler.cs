@@ -68,13 +68,16 @@ public static unsafe class SlangCompiler
         }
     }
 
+    /// <inheritdoc cref="Compile(ReadOnlySpan{string})"/>
+    public static byte[] Compile(params string[] args) => Compile(args.AsSpan());
+
     /// <summary>
     /// Compiles Slang shader code with the specified command line arguments.
     /// </summary>
     /// <param name="args">Command line arguments for the Slang compiler (e.g., file paths, target profiles, etc.)</param>
     /// <returns>The compiled shader bytecode as a byte array</returns>
     /// <exception cref="Exception">Thrown when compilation fails with diagnostic messages</exception>
-    public static byte[] Compile(params string[] args)
+    public static byte[] Compile(params ReadOnlySpan<string> args)
     {
         using SlangCompileRequest request = session.CreateCompileRequest();
 
@@ -83,6 +86,10 @@ public static unsafe class SlangCompiler
         return request.GetResult();
     }
 
+    /// <inheritdoc cref="CompileWithReflection(ReadOnlySpan{string}, out SlangReflection)"/>
+    public static byte[] CompileWithReflection(string[] args, out SlangReflection reflection) =>
+        CompileWithReflection(args.AsSpan(), out reflection);
+
     /// <summary>
     /// Compiles Slang shader code with the specified command line arguments and returns reflection information.
     /// </summary>
@@ -90,7 +97,7 @@ public static unsafe class SlangCompiler
     /// <param name="reflection">Outputs reflection information about the compiled shader including parameters and entry points</param>
     /// <returns>The compiled shader bytecode as a byte array</returns>
     /// <exception cref="Exception">Thrown when compilation fails with diagnostic messages</exception>
-    public static byte[] CompileWithReflection(string[] args, out SlangReflection reflection)
+    public static byte[] CompileWithReflection(ReadOnlySpan<string> args, out SlangReflection reflection)
     {
         using SlangCompileRequest request = session.CreateCompileRequest();
 
@@ -109,7 +116,7 @@ public static unsafe class SlangCompiler
     /// <param name="args">Command line arguments to pass to the compiler</param>
     /// <returns>The same compile request after processing</returns>
     /// <exception cref="Exception">Thrown when command line processing or compilation fails</exception>
-    private static SlangCompileRequest Compile(SlangCompileRequest request, string[] args)
+    private static SlangCompileRequest Compile(SlangCompileRequest request, ReadOnlySpan<string> args)
     {
         StringBuilder sb = new();
 
