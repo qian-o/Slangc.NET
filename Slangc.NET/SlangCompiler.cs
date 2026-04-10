@@ -137,7 +137,6 @@ public static unsafe class SlangCompiler
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static void DiagnosticCallback(byte* message, void* userData)
     {
-        var sb = *(StringBuilder*)userData;
-        sb.Append(Marshal.PtrToStringUTF8((nint)message) ?? string.Empty);
+        (*(StringBuilder*)userData).Append(Marshal.PtrToStringUTF8((nint)message) ?? "");
     }
 }
