@@ -14,7 +14,7 @@ public unsafe partial class SlangSession : IDisposable
     /// <param name="lpString">Optional configuration string for the session</param>
     /// <returns>Handle to the created Slang session</returns>
     [LibraryImport("slang-compiler")]
-    private static partial nint spCreateSession(char* lpString);
+    private static partial nint spCreateSession(byte* lpString);
 
     /// <summary>
     /// Native function to destroy a Slang session.

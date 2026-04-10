@@ -49,7 +49,7 @@ public unsafe partial class SlangReflection
             return;
         }
 
-        Json = Marshal.PtrToStringAnsi((nint)outBlob->GetBufferPointer(), (int)outBlob->GetBufferSize()) ?? string.Empty;
+        Json = Marshal.PtrToStringUTF8((nint)outBlob->GetBufferPointer(), (int)outBlob->GetBufferSize()) ?? "";
 
         deserialized = new(() =>
         {
@@ -67,6 +67,7 @@ public unsafe partial class SlangReflection
             }
             catch
             {
+                // ignored
             }
 
             return (parameters, entryPoints);

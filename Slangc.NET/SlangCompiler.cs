@@ -1,3 +1,4 @@
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -22,21 +23,27 @@ public static unsafe class SlangCompiler
 
         if (OperatingSystem.IsWindows())
         {
-            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native", "slang-compiler.dll"),
-                                 Path.Combine(AppContext.BaseDirectory, "slang-compiler.dll"),
-                                 "slang-compiler.dll");
+            slangCompiler = Load(
+                Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native", "slang-compiler.dll"),
+                Path.Combine(AppContext.BaseDirectory, "slang-compiler.dll"),
+                "slang-compiler.dll"
+            );
         }
         else if (OperatingSystem.IsLinux())
         {
-            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native", "libslang-compiler.so"),
-                                 Path.Combine(AppContext.BaseDirectory, "libslang-compiler.so"),
-                                 "libslang-compiler.so");
+            slangCompiler = Load(
+                Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native", "libslang-compiler.so"),
+                Path.Combine(AppContext.BaseDirectory, "libslang-compiler.so"),
+                "libslang-compiler.so"
+            );
         }
         else if (OperatingSystem.IsMacOS())
         {
-            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native", "libslang-compiler.dylib"),
-                                 Path.Combine(AppContext.BaseDirectory, "libslang-compiler.dylib"),
-                                 "libslang-compiler.dylib");
+            slangCompiler = Load(
+                Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native", "libslang-compiler.dylib"),
+                Path.Combine(AppContext.BaseDirectory, "libslang-compiler.dylib"),
+                "libslang-compiler.dylib"
+            );
         }
         else
         {
@@ -106,7 +113,7 @@ public static unsafe class SlangCompiler
     {
         StringBuilder sb = new();
 
-        request.SetDiagnosticCallback(DiagnosticCallback, &sb);
+        request.SetDiagnosticCallback(&DiagnosticCallback, &sb);
 
         if (request.ProcessCommandLineArguments(args) is not 0)
         {
@@ -127,9 +134,10 @@ public static unsafe class SlangCompiler
     /// </summary>
     /// <param name="message">Pointer to the diagnostic message string from Slang</param>
     /// <param name="userData">Pointer to user data (StringBuilder*)</param>
-    private static void DiagnosticCallback(char* message, void* userData)
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static void DiagnosticCallback(byte* message, void* userData)
     {
         var sb = *(StringBuilder*)userData;
-        sb.Append(Marshal.PtrToStringAnsi((nint)message) ?? string.Empty);
+        sb.Append(Marshal.PtrToStringUTF8((nint)message) ?? string.Empty);
     }
 }
