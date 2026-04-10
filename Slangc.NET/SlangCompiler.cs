@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Slangc.NET;
@@ -106,28 +106,19 @@ public static unsafe class SlangCompiler
     {
         StringBuilder sb = new();
 
-        GCHandle handle = GCHandle.Alloc(sb);
+        request.SetDiagnosticCallback(DiagnosticCallback, &sb);
 
-        try
+        if (request.ProcessCommandLineArguments(args) is not 0)
         {
-            request.SetDiagnosticCallback(DiagnosticCallback, (void*)(nint)handle);
-
-            if (request.ProcessCommandLineArguments(args) is not 0)
-            {
-                throw new Exception(sb.ToString());
-            }
-
-            if (request.Compile() is not 0)
-            {
-                throw new Exception(sb.ToString());
-            }
-
-            return request;
+            throw new Exception(sb.ToString());
         }
-        finally
+
+        if (request.Compile() is not 0)
         {
-            handle.Free();
+            throw new Exception(sb.ToString());
         }
+
+        return request;
     }
 
     /// <summary>
@@ -135,11 +126,10 @@ public static unsafe class SlangCompiler
     /// Appends diagnostic messages to the StringBuilder stored in userData.
     /// </summary>
     /// <param name="message">Pointer to the diagnostic message string from Slang</param>
-    /// <param name="userData">Pointer to user data (GCHandle containing StringBuilder)</param>
+    /// <param name="userData">Pointer to user data (StringBuilder*)</param>
     private static void DiagnosticCallback(char* message, void* userData)
     {
-        GCHandle handle = (GCHandle)(nint)userData;
-
-        ((StringBuilder)handle.Target!).Append(Marshal.PtrToStringAnsi((nint)message) ?? string.Empty);
+        var sb = *(StringBuilder*)userData;
+        sb.Append(Marshal.PtrToStringAnsi((nint)message) ?? string.Empty);
     }
 }
