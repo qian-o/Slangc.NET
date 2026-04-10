@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Slangc.NET;
@@ -129,7 +129,6 @@ public static unsafe class SlangCompiler
     /// <param name="userData">Pointer to user data (StringBuilder*)</param>
     private static void DiagnosticCallback(char* message, void* userData)
     {
-        var sb = *(StringBuilder*)userData;
-        sb.Append(Marshal.PtrToStringAnsi((nint)message) ?? string.Empty);
+        (*(StringBuilder*)userData).Append(Marshal.PtrToStringAnsi((nint)message) ?? string.Empty);
     }
 }
