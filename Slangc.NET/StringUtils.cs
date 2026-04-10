@@ -30,4 +30,6 @@ internal readonly struct TmpUtf8String(byte[] Data) : IDisposable
             throw;
         }
     }
+
+    public static TmpUtf8String Rent(int length) => new(ArrayPool<byte>.Shared.Rent(length));
 }

@@ -125,31 +125,31 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
         }
     }
 
+    /// <inheritdoc cref="ProcessCommandLineArguments(ReadOnlySpan{string})"/>
+    public int ProcessCommandLineArguments(string[] args) => ProcessCommandLineArguments(args.AsSpan());
+
     /// <summary>
     /// Processes command line arguments to configure the compilation request.
     /// </summary>
     /// <param name="args">Array of command line arguments (e.g., file paths, compiler options)</param>
     /// <returns>Result code where 0 indicates success</returns>
-    public int ProcessCommandLineArguments(string[] args)
+    public int ProcessCommandLineArguments(params ReadOnlySpan<string> args)
     {
-        var argsPtr = stackalloc byte*[args.Length];
-        var tmpArr = ArrayPool<byte[]>.Shared.Rent(args.Length);
-        try
+        var sum_utf8_length = 0;
+        foreach (var arg in args) sum_utf8_length += Encoding.UTF8.GetMaxByteCount(arg.Length) + 1;
+        using var tmp = TmpUtf8String.Rent(sum_utf8_length);
+        fixed (byte* ptr = tmp)
         {
+            var offset = 0;
+            var argsPtr = stackalloc byte*[args.Length];
             for (var i = 0; i < args.Length; i++)
             {
-                var arr = GC.AllocateUninitializedArray<byte>(Encoding.UTF8.GetMaxByteCount(args[i].Length) + 1, true);
-                var count = Encoding.UTF8.GetBytes(args[i], arr);
-                arr[count] = 0;
-                tmpArr[i] = arr;
-                argsPtr[i] = (byte*)Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(arr));
+                var span = tmp.Data.AsSpan(offset);
+                var count = Encoding.UTF8.GetBytes(args[i], span);
+                (argsPtr[i] = ptr + offset)[count] = 0;
+                offset += count + 1;
             }
             return spProcessCommandLineArguments(Handle, argsPtr, args.Length);
-        }
-        finally
-        {
-            tmpArr.AsSpan(0, args.Length).Clear();
-            ArrayPool<byte[]>.Shared.Return(tmpArr);
         }
     }
 
