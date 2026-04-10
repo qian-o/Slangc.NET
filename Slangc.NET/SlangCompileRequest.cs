@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Buffers;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Slangc.NET;
 
@@ -8,13 +11,6 @@ namespace Slangc.NET;
 /// </summary>
 public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
 {
-    /// <summary>
-    /// Delegate for receiving diagnostic messages during compilation.
-    /// </summary>
-    /// <param name="message">Pointer to the diagnostic message string</param>
-    /// <param name="userData">Pointer to user-provided data</param>
-    public delegate void SlangDiagnosticCallback(char* message, void* userData);
-
     /// <summary>
     /// Native function to destroy a compile request.
     /// </summary>
@@ -37,7 +33,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="request">Handle to the compile request</param>
     /// <param name="path">Pointer to the path string</param>
     [LibraryImport("slang-compiler")]
-    private static partial void spAddSearchPath(nint request, char* path);
+    private static partial void spAddSearchPath(nint request, byte* path);
 
     /// <summary>
     /// Native function to add a preprocessor define.
@@ -46,7 +42,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="key">Pointer to the define key string</param>
     /// <param name="value">Pointer to the define value string</param>
     [LibraryImport("slang-compiler")]
-    private static partial void spAddPreprocessorDefine(nint request, char* key, char* value);
+    private static partial void spAddPreprocessorDefine(nint request, byte* key, byte* value);
 
     /// <summary>
     /// Native function to process command line arguments.
@@ -56,7 +52,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="argCount">Number of arguments</param>
     /// <returns>Result code (0 for success)</returns>
     [LibraryImport("slang-compiler")]
-    private static partial int spProcessCommandLineArguments(nint request, char** args, int argCount);
+    private static partial int spProcessCommandLineArguments(nint request, byte** args, int argCount);
 
     /// <summary>
     /// Native function to execute the compilation.
@@ -74,7 +70,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="outSize">Pointer to receive the output size</param>
     /// <returns>Pointer to the compiled code</returns>
     [LibraryImport("slang-compiler")]
-    private static partial char* spGetEntryPointCode(nint request, int entryPointIndex, uint* outSize);
+    private static partial byte* spGetEntryPointCode(nint request, int entryPointIndex, uint* outSize);
 
     /// <summary>
     /// Native function to get the compiled result.
@@ -83,7 +79,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="outSize">Pointer to receive the output size</param>
     /// <returns>Pointer to the compiled bytecode</returns>
     [LibraryImport("slang-compiler")]
-    private static partial char* spGetCompileRequestCode(nint request, uint* outSize);
+    private static partial byte* spGetCompileRequestCode(nint request, uint* outSize);
 
     /// <summary>
     /// Gets the native handle to the underlying Slang compile request.
@@ -95,9 +91,9 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// </summary>
     /// <param name="callback">The callback function to receive diagnostic messages</param>
     /// <param name="userData">User data pointer that will be passed to the callback</param>
-    public void SetDiagnosticCallback(SlangDiagnosticCallback callback, void* userData)
+    public void SetDiagnosticCallback(delegate* unmanaged[Cdecl]<byte*, void*, void> callback, void* userData)
     {
-        spSetDiagnosticCallback(Handle, (void*)Marshal.GetFunctionPointerForDelegate(callback), userData);
+        spSetDiagnosticCallback(Handle, callback, userData);
     }
 
     /// <summary>
@@ -106,11 +102,11 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="path">The directory path to add to the search path list</param>
     public void AddSearchPath(string path)
     {
-        char* pathPtr = (char*)Marshal.StringToHGlobalAnsi(path);
-
-        spAddSearchPath(Handle, pathPtr);
-
-        Marshal.FreeHGlobal((nint)pathPtr);
+        using var pathUtf8 = TmpUtf8String.Alloc(path);
+        fixed (byte* pathPtr = pathUtf8)
+        {
+            spAddSearchPath(Handle, pathPtr);
+        }
     }
 
     /// <summary>
@@ -120,13 +116,13 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="value">The value to assign to the preprocessor define</param>
     public void AddPreprocessorDefine(string key, string value)
     {
-        char* keyPtr = (char*)Marshal.StringToHGlobalAnsi(key);
-        char* valuePtr = (char*)Marshal.StringToHGlobalAnsi(value);
-
-        spAddPreprocessorDefine(Handle, keyPtr, valuePtr);
-
-        Marshal.FreeHGlobal((nint)keyPtr);
-        Marshal.FreeHGlobal((nint)valuePtr);
+        using var keyUtf8 = TmpUtf8String.Alloc(key);
+        using var valueUtf8 = TmpUtf8String.Alloc(value);
+        fixed (byte* keyPtr = keyUtf8)
+        fixed (byte* valuePtr = valueUtf8)
+        {
+            spAddPreprocessorDefine(Handle, keyPtr, valuePtr);
+        }
     }
 
     /// <summary>
@@ -136,21 +132,25 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <returns>Result code where 0 indicates success</returns>
     public int ProcessCommandLineArguments(string[] args)
     {
-        char** argsPtr = stackalloc char*[args.Length];
-
-        for (int i = 0; i < args.Length; i++)
+        var argsPtr = stackalloc byte*[args.Length];
+        var tmpArr = ArrayPool<byte[]>.Shared.Rent(args.Length);
+        try
         {
-            argsPtr[i] = (char*)Marshal.StringToHGlobalAnsi(args[i]);
+            for (var i = 0; i < args.Length; i++)
+            {
+                var arr = GC.AllocateUninitializedArray<byte>(Encoding.UTF8.GetMaxByteCount(args[i].Length) + 1, true);
+                var count = Encoding.UTF8.GetBytes(args[i], arr);
+                arr[count] = 0;
+                tmpArr[i] = arr;
+                argsPtr[i] = (byte*)Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(arr));
+            }
+            return spProcessCommandLineArguments(Handle, argsPtr, args.Length);
         }
-
-        int result = spProcessCommandLineArguments(Handle, argsPtr, args.Length);
-
-        for (int i = 0; i < args.Length; i++)
+        finally
         {
-            Marshal.FreeHGlobal((nint)argsPtr[i]);
+            tmpArr.AsSpan(0, args.Length).Clear();
+            ArrayPool<byte[]>.Shared.Return(tmpArr);
         }
-
-        return result;
     }
 
     /// <summary>
@@ -178,7 +178,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
             int i = 0;
             while (true)
             {
-                char* codePtr = spGetEntryPointCode(Handle, i++, &size);
+                byte* codePtr = spGetEntryPointCode(Handle, i++, &size);
 
                 if (size is 0)
                 {
@@ -192,7 +192,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
         }
         else
         {
-            char* codePtr = spGetCompileRequestCode(Handle, &size);
+            byte* codePtr = spGetCompileRequestCode(Handle, &size);
 
             return [.. new ReadOnlySpan<byte>(codePtr, (int)size)];
         }
