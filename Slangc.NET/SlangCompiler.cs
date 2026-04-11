@@ -13,7 +13,7 @@ public static unsafe class SlangCompiler
     /// <summary>
     /// Shared Slang session instance used for all compilation requests.
     /// </summary>
-    private static readonly SlangSession session;
+    private static readonly ThreadLocal<SlangSession> session = new(() => new());
 
     static SlangCompiler()
     {
@@ -23,27 +23,21 @@ public static unsafe class SlangCompiler
 
         if (OperatingSystem.IsWindows())
         {
-            slangCompiler = Load(
-                Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native", "slang-compiler.dll"),
-                Path.Combine(AppContext.BaseDirectory, "slang-compiler.dll"),
-                "slang-compiler.dll"
-            );
+            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"win-{architecture}", "native", "slang-compiler.dll"),
+                                 Path.Combine(AppContext.BaseDirectory, "slang-compiler.dll"),
+                                 "slang-compiler.dll");
         }
         else if (OperatingSystem.IsLinux())
         {
-            slangCompiler = Load(
-                Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native", "libslang-compiler.so"),
-                Path.Combine(AppContext.BaseDirectory, "libslang-compiler.so"),
-                "libslang-compiler.so"
-            );
+            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"linux-{architecture}", "native", "libslang-compiler.so"),
+                                 Path.Combine(AppContext.BaseDirectory, "libslang-compiler.so"),
+                                 "libslang-compiler.so");
         }
         else if (OperatingSystem.IsMacOS())
         {
-            slangCompiler = Load(
-                Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native", "libslang-compiler.dylib"),
-                Path.Combine(AppContext.BaseDirectory, "libslang-compiler.dylib"),
-                "libslang-compiler.dylib"
-            );
+            slangCompiler = Load(Path.Combine(AppContext.BaseDirectory, "runtimes", $"osx-{architecture}", "native", "libslang-compiler.dylib"),
+                                 Path.Combine(AppContext.BaseDirectory, "libslang-compiler.dylib"),
+                                 "libslang-compiler.dylib");
         }
         else
         {
@@ -51,8 +45,6 @@ public static unsafe class SlangCompiler
         }
 
         NativeLibrary.SetDllImportResolver(typeof(SlangCompiler).Assembly, (_, _, _) => slangCompiler);
-
-        session = new();
 
         static nint Load(params string[] paths)
         {
@@ -68,9 +60,6 @@ public static unsafe class SlangCompiler
         }
     }
 
-    /// <inheritdoc cref="Compile(ReadOnlySpan{string})"/>
-    public static byte[] Compile(params string[] args) => Compile(args.AsSpan());
-
     /// <summary>
     /// Compiles Slang shader code with the specified command line arguments.
     /// </summary>
@@ -79,16 +68,12 @@ public static unsafe class SlangCompiler
     /// <exception cref="Exception">Thrown when compilation fails with diagnostic messages</exception>
     public static byte[] Compile(params ReadOnlySpan<string> args)
     {
-        using SlangCompileRequest request = session.CreateCompileRequest();
+        using SlangCompileRequest request = session.Value!.CreateCompileRequest();
 
         Compile(request, args);
 
         return request.GetResult();
     }
-
-    /// <inheritdoc cref="CompileWithReflection(ReadOnlySpan{string}, out SlangReflection)"/>
-    public static byte[] CompileWithReflection(string[] args, out SlangReflection reflection) =>
-        CompileWithReflection(args.AsSpan(), out reflection);
 
     /// <summary>
     /// Compiles Slang shader code with the specified command line arguments and returns reflection information.
@@ -99,7 +84,7 @@ public static unsafe class SlangCompiler
     /// <exception cref="Exception">Thrown when compilation fails with diagnostic messages</exception>
     public static byte[] CompileWithReflection(ReadOnlySpan<string> args, out SlangReflection reflection)
     {
-        using SlangCompileRequest request = session.CreateCompileRequest();
+        using SlangCompileRequest request = session.Value!.CreateCompileRequest();
 
         Compile(request, args);
 
@@ -118,18 +103,18 @@ public static unsafe class SlangCompiler
     /// <exception cref="Exception">Thrown when command line processing or compilation fails</exception>
     private static SlangCompileRequest Compile(SlangCompileRequest request, ReadOnlySpan<string> args)
     {
-        StringBuilder sb = new();
+        StringBuilder stringBuilder = new();
 
-        request.SetDiagnosticCallback(&DiagnosticCallback, &sb);
+        request.SetDiagnosticCallback(&DiagnosticCallback, &stringBuilder);
 
         if (request.ProcessCommandLineArguments(args) is not 0)
         {
-            throw new Exception(sb.ToString());
+            throw new Exception(stringBuilder.ToString());
         }
 
         if (request.Compile() is not 0)
         {
-            throw new Exception(sb.ToString());
+            throw new Exception(stringBuilder.ToString());
         }
 
         return request;
