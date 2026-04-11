@@ -134,9 +134,9 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     public int ProcessCommandLineArguments(ReadOnlySpan<string> args)
     {
         int* offsets = stackalloc int[args.Length];
-        using Utf8String tmp = new(args, new(offsets, args.Length));
+        using Utf8String utf8String = new(args, new(offsets, args.Length));
 
-        fixed (byte* pData = tmp.Data)
+        fixed (byte* pData = utf8String.Data)
         {
             byte** pArgs = stackalloc byte*[args.Length];
             for (int i = 0; i < args.Length; i++)
