@@ -139,7 +139,6 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
         fixed (byte* pData = tmp.Data)
         {
             byte** pArgs = stackalloc byte*[args.Length];
-
             for (int i = 0; i < args.Length; i++)
             {
                 pArgs[i] = pData + offsets[i];
