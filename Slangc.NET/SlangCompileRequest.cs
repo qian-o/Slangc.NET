@@ -29,8 +29,8 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
     /// <param name="path">Pointer to the path string</param>
-    [LibraryImport("slang-compiler", StringMarshalling = StringMarshalling.Utf8)]
-    private static partial void spAddSearchPath(nint request, string path);
+    [LibraryImport("slang-compiler")]
+    private static partial void spAddSearchPath(nint request, byte* path);
 
     /// <summary>
     /// Native function to add a preprocessor define.
@@ -38,8 +38,8 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="request">Handle to the compile request</param>
     /// <param name="key">Pointer to the define key string</param>
     /// <param name="value">Pointer to the define value string</param>
-    [LibraryImport("slang-compiler", StringMarshalling = StringMarshalling.Utf8)]
-    private static partial void spAddPreprocessorDefine(nint request, string key, string value);
+    [LibraryImport("slang-compiler")]
+    private static partial void spAddPreprocessorDefine(nint request, byte* key, byte* value);
 
     /// <summary>
     /// Native function to process command line arguments.
@@ -48,8 +48,8 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="args">Pointer to array of argument strings</param>
     /// <param name="argCount">Number of arguments</param>
     /// <returns>Result code (0 for success)</returns>
-    [LibraryImport("slang-compiler", StringMarshalling = StringMarshalling.Utf8)]
-    private static partial int spProcessCommandLineArguments(nint request, ReadOnlySpan<string> args, int argCount);
+    [LibraryImport("slang-compiler")]
+    private static partial int spProcessCommandLineArguments(nint request, byte** args, int argCount);
 
     /// <summary>
     /// Native function to execute the compilation.
@@ -99,7 +99,12 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="path">The directory path to add to the search path list</param>
     public void AddSearchPath(string path)
     {
-        spAddSearchPath(Handle, path);
+        using Utf8String pathUtf8 = new(path);
+
+        fixed (byte* pPath = pathUtf8.Data)
+        {
+            spAddSearchPath(Handle, pPath);
+        }
     }
 
     /// <summary>
@@ -109,7 +114,16 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="value">The value to assign to the preprocessor define</param>
     public void AddPreprocessorDefine(string key, string value)
     {
-        spAddPreprocessorDefine(Handle, key, value);
+        using Utf8String keyUtf8 = new(key);
+        using Utf8String valueUtf8 = new(value);
+
+        fixed (byte* pKey = keyUtf8.Data)
+        {
+            fixed (byte* pValue = valueUtf8.Data)
+            {
+                spAddPreprocessorDefine(Handle, pKey, pValue);
+            }
+        }
     }
 
     /// <summary>
@@ -119,7 +133,20 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <returns>Result code where 0 indicates success</returns>
     public int ProcessCommandLineArguments(ReadOnlySpan<string> args)
     {
-        return spProcessCommandLineArguments(Handle, args, args.Length);
+        int* offsets = stackalloc int[args.Length];
+        using Utf8String tmp = new(args, new(offsets, args.Length));
+
+        fixed (byte* pData = tmp.Data)
+        {
+            byte** pArgs = stackalloc byte*[args.Length];
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                pArgs[i] = pData + offsets[i];
+            }
+
+            return spProcessCommandLineArguments(Handle, pArgs, args.Length);
+        }
     }
 
     /// <summary>
