@@ -1,6 +1,4 @@
-﻿using System.Buffers;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Slangc.NET;
@@ -119,21 +117,20 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
         using var keyUtf8 = TmpUtf8String.Alloc(key);
         using var valueUtf8 = TmpUtf8String.Alloc(value);
         fixed (byte* keyPtr = keyUtf8)
-        fixed (byte* valuePtr = valueUtf8)
         {
-            spAddPreprocessorDefine(Handle, keyPtr, valuePtr);
+            fixed (byte* valuePtr = valueUtf8)
+            {
+                spAddPreprocessorDefine(Handle, keyPtr, valuePtr);
+            }
         }
     }
-
-    /// <inheritdoc cref="ProcessCommandLineArguments(ReadOnlySpan{string})"/>
-    public int ProcessCommandLineArguments(string[] args) => ProcessCommandLineArguments(args.AsSpan());
 
     /// <summary>
     /// Processes command line arguments to configure the compilation request.
     /// </summary>
     /// <param name="args">Array of command line arguments (e.g., file paths, compiler options)</param>
     /// <returns>Result code where 0 indicates success</returns>
-    public int ProcessCommandLineArguments(params ReadOnlySpan<string> args)
+    public int ProcessCommandLineArguments(ReadOnlySpan<string> args)
     {
         var sum_utf8_length = 0;
         foreach (var arg in args) sum_utf8_length += Encoding.UTF8.GetMaxByteCount(arg.Length) + 1;
