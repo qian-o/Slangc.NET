@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Slangc.NET;
 
@@ -30,8 +29,8 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
     /// <param name="path">Pointer to the path string</param>
-    [LibraryImport("slang-compiler")]
-    private static partial void spAddSearchPath(nint request, byte* path);
+    [LibraryImport("slang-compiler", StringMarshalling = StringMarshalling.Utf8)]
+    private static partial void spAddSearchPath(nint request, string path);
 
     /// <summary>
     /// Native function to add a preprocessor define.
@@ -39,8 +38,8 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="request">Handle to the compile request</param>
     /// <param name="key">Pointer to the define key string</param>
     /// <param name="value">Pointer to the define value string</param>
-    [LibraryImport("slang-compiler")]
-    private static partial void spAddPreprocessorDefine(nint request, byte* key, byte* value);
+    [LibraryImport("slang-compiler", StringMarshalling = StringMarshalling.Utf8)]
+    private static partial void spAddPreprocessorDefine(nint request, string key, string value);
 
     /// <summary>
     /// Native function to process command line arguments.
@@ -49,8 +48,8 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="args">Pointer to array of argument strings</param>
     /// <param name="argCount">Number of arguments</param>
     /// <returns>Result code (0 for success)</returns>
-    [LibraryImport("slang-compiler")]
-    private static partial int spProcessCommandLineArguments(nint request, byte** args, int argCount);
+    [LibraryImport("slang-compiler", StringMarshalling = StringMarshalling.Utf8)]
+    private static partial int spProcessCommandLineArguments(nint request, ReadOnlySpan<string> args, int argCount);
 
     /// <summary>
     /// Native function to execute the compilation.
@@ -100,11 +99,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="path">The directory path to add to the search path list</param>
     public void AddSearchPath(string path)
     {
-        using var pathUtf8 = TmpUtf8String.Alloc(path);
-        fixed (byte* pathPtr = pathUtf8)
-        {
-            spAddSearchPath(Handle, pathPtr);
-        }
+        spAddSearchPath(Handle, path);
     }
 
     /// <summary>
@@ -114,15 +109,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="value">The value to assign to the preprocessor define</param>
     public void AddPreprocessorDefine(string key, string value)
     {
-        using var keyUtf8 = TmpUtf8String.Alloc(key);
-        using var valueUtf8 = TmpUtf8String.Alloc(value);
-        fixed (byte* keyPtr = keyUtf8)
-        {
-            fixed (byte* valuePtr = valueUtf8)
-            {
-                spAddPreprocessorDefine(Handle, keyPtr, valuePtr);
-            }
-        }
+        spAddPreprocessorDefine(Handle, key, value);
     }
 
     /// <summary>
@@ -132,22 +119,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <returns>Result code where 0 indicates success</returns>
     public int ProcessCommandLineArguments(ReadOnlySpan<string> args)
     {
-        var sum_utf8_length = 0;
-        foreach (var arg in args) sum_utf8_length += Encoding.UTF8.GetMaxByteCount(arg.Length) + 1;
-        using var tmp = TmpUtf8String.Rent(sum_utf8_length);
-        fixed (byte* ptr = tmp)
-        {
-            var offset = 0;
-            var argsPtr = stackalloc byte*[args.Length];
-            for (var i = 0; i < args.Length; i++)
-            {
-                var span = tmp.Data.AsSpan(offset);
-                var count = Encoding.UTF8.GetBytes(args[i], span);
-                (argsPtr[i] = ptr + offset)[count] = 0;
-                offset += count + 1;
-            }
-            return spProcessCommandLineArguments(Handle, argsPtr, args.Length);
-        }
+        return spProcessCommandLineArguments(Handle, args, args.Length);
     }
 
     /// <summary>
