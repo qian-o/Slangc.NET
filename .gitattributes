@@ -50,9 +50,4 @@
 #*.RTF   diff=astextplain
 native/**/*.dll filter=lfs diff=lfs merge=lfs -text
 native/**/*.so filter=lfs diff=lfs merge=lfs -text
-native/**/*.so.* filter=lfs diff=lfs merge=lfs -text
 native/**/*.dylib filter=lfs diff=lfs merge=lfs -text
-native/linux-arm64/libslang-compiler.so filter=lfs diff=lfs merge=lfs -text
-native/linux-x64/libslang-compiler.so filter=lfs diff=lfs merge=lfs -text
-native/osx-arm64/libslang-compiler.dylib filter=lfs diff=lfs merge=lfs -text
-native/osx-x64/libslang-compiler.dylib filter=lfs diff=lfs merge=lfs -text
