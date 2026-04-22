@@ -1,0 +1,85 @@
+name: Slang Native Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      size_threshold:
+        description: 'Strip blobs bigger than this size (e.g. 1M, 500K)'
+        required: true
+        default: '1M'
+      confirm:
+        description: 'Type "REWRITE" to confirm force-push history rewrite'
+        required: true
+        default: ''
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Validate Confirmation
+        run: |
+          if [ "${{github.event.inputs.confirm}}" != "REWRITE" ]; then
+            echo "::error::Confirmation not provided. Type REWRITE to proceed."
+            exit 1
+          fi
+
+      - name: Checkout Full History
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+          token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Install git-filter-repo
+        run: pip install git-filter-repo
+
+      - name: Strip Large Blobs From History
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          echo "Repo size before:"
+          du -sh .git
+
+          git filter-repo --strip-blobs-bigger-than ${{github.event.inputs.size_threshold}} --force
+
+          echo "Repo size after:"
+          du -sh .git
+
+      - name: Restore Current Native Binaries
+        run: |
+          mkdir -p /tmp/native-restore
+          git clone --depth 1 --filter=blob:none --sparse \
+            https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git \
+            /tmp/native-restore
+
+          cd /tmp/native-restore
+          git lfs install --local
+          git sparse-checkout set native
+          git lfs pull
+
+          cd $GITHUB_WORKSPACE
+          git lfs install --local
+          rm -rf native
+          cp -r /tmp/native-restore/native ./native
+
+          if [ -n "$(git status --porcelain native/)" ]; then
+            git add native/
+            git commit -m "Restore native binaries after history cleanup"
+          fi
+
+      - name: Force Push Rewritten History
+        run: |
+          git remote add origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+          git push --force origin HEAD:master
+          git push --force origin --tags
+
+      - name: Summary
+        run: |
+          echo "## History Rewrite Complete" >> $GITHUB_STEP_SUMMARY
+          echo "All blobs larger than ${{github.event.inputs.size_threshold}} have been stripped from history." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**All collaborators must re-clone the repository.**" >> $GITHUB_STEP_SUMMARY
