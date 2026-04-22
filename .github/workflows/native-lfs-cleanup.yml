@@ -1,0 +1,68 @@
+name: Native LFS Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "REWRITE" to confirm force-push history rewrite'
+        required: true
+        default: ''
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Validate Confirmation
+        run: |
+          if [ "${{github.event.inputs.confirm}}" != "REWRITE" ]; then
+            echo "::error::Confirmation not provided. Type REWRITE to proceed."
+            exit 1
+          fi
+
+      - name: Checkout Full History
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+          token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Install git-filter-repo
+        run: pip install git-filter-repo
+
+      - name: Backup Current Native Files
+        run: |
+          mkdir -p /tmp/native-backup
+          cp -r native/* /tmp/native-backup/
+
+      - name: Strip native/ From All History
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git filter-repo --path native/ --invert-paths --force
+
+      - name: Restore Current Native Files As Single Commit
+        run: |
+          mkdir -p native
+          cp -r /tmp/native-backup/* native/
+          git add native/
+          git commit -m "Add current native binaries (history compressed)"
+
+      - name: Force Push Rewritten History
+        run: |
+          git remote add origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+          git push --force origin HEAD:master
+          git push --force origin --tags
+
+      - name: Summary
+        run: |
+          echo "## Native LFS Cleanup Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- All historical references to \`native/\` have been removed" >> $GITHUB_STEP_SUMMARY
+          echo "- Current native binaries committed as a single new commit" >> $GITHUB_STEP_SUMMARY
+          echo "- GitHub LFS will GC unreferenced objects (may take some time)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**All collaborators must re-clone the repository.**" >> $GITHUB_STEP_SUMMARY
