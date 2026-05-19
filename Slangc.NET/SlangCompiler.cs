@@ -61,32 +61,32 @@ public static unsafe class SlangCompiler
     }
 
     /// <summary>
-    /// Compiles Slang shader code with the specified command line arguments.
+    /// Compiles a Slang shader from one or more source files specified through the command line arguments.
     /// </summary>
-    /// <param name="args">Command line arguments for the Slang compiler (e.g., file paths, target profiles, etc.)</param>
-    /// <returns>The compiled shader bytecode as a byte array</returns>
-    /// <exception cref="Exception">Thrown when compilation fails with diagnostic messages</exception>
+    /// <param name="args">Command line arguments for the Slang compiler (e.g., source file paths, target profiles, entry points, etc.).</param>
+    /// <returns>The compiled shader bytecode as a byte array.</returns>
+    /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
     public static byte[] Compile(params ReadOnlySpan<string> args)
     {
         using SlangCompileRequest request = session.Value!.CreateCompileRequest();
 
-        Compile(request, args);
+        Compile(request, null, args);
 
         return request.GetResult();
     }
 
     /// <summary>
-    /// Compiles Slang shader code with the specified command line arguments and returns reflection information.
+    /// Compiles a Slang shader from one or more source files and returns reflection information.
     /// </summary>
-    /// <param name="args">Command line arguments for the Slang compiler (e.g., file paths, target profiles, etc.)</param>
-    /// <param name="reflection">Outputs reflection information about the compiled shader including parameters and entry points</param>
-    /// <returns>The compiled shader bytecode as a byte array</returns>
-    /// <exception cref="Exception">Thrown when compilation fails with diagnostic messages</exception>
+    /// <param name="args">Command line arguments for the Slang compiler (e.g., source file paths, target profiles, entry points, etc.).</param>
+    /// <param name="reflection">Outputs reflection information about the compiled shader including parameters and entry points.</param>
+    /// <returns>The compiled shader bytecode as a byte array.</returns>
+    /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
     public static byte[] CompileWithReflection(ReadOnlySpan<string> args, out SlangReflection reflection)
     {
         using SlangCompileRequest request = session.Value!.CreateCompileRequest();
 
-        Compile(request, args);
+        Compile(request, null, args);
 
         reflection = new(request.Handle);
 
@@ -94,14 +94,53 @@ public static unsafe class SlangCompiler
     }
 
     /// <summary>
-    /// Internal method that performs the actual compilation with the given compile request and arguments.
-    /// Sets up diagnostic callbacks and handles compilation errors.
+    /// Compiles a Slang shader from an in-memory source string with the specified command line arguments.
     /// </summary>
-    /// <param name="request">The compile request to use for compilation</param>
-    /// <param name="args">Command line arguments to pass to the compiler</param>
-    /// <returns>The same compile request after processing</returns>
-    /// <exception cref="Exception">Thrown when command line processing or compilation fails</exception>
-    private static SlangCompileRequest Compile(SlangCompileRequest request, ReadOnlySpan<string> args)
+    /// <param name="slang">The Slang shader source code to compile.</param>
+    /// <param name="args">Command line arguments for the Slang compiler (e.g., target profiles, entry points, etc.).
+    /// Source file path arguments are not required since the source is provided directly.</param>
+    /// <returns>The compiled shader bytecode as a byte array.</returns>
+    /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
+    public static byte[] Compile(string slang, params ReadOnlySpan<string> args)
+    {
+        using SlangCompileRequest request = session.Value!.CreateCompileRequest();
+
+        Compile(request, slang, args);
+
+        return request.GetResult();
+    }
+
+    /// <summary>
+    /// Compiles a Slang shader from an in-memory source string with the specified command line arguments
+    /// and returns reflection information.
+    /// </summary>
+    /// <param name="slang">The Slang shader source code to compile.</param>
+    /// <param name="args">Command line arguments for the Slang compiler (e.g., target profiles, entry points, etc.).
+    /// Source file path arguments are not required since the source is provided directly.</param>
+    /// <param name="reflection">Outputs reflection information about the compiled shader including parameters and entry points.</param>
+    /// <returns>The compiled shader bytecode as a byte array.</returns>
+    /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
+    public static byte[] CompileWithReflection(string slang, ReadOnlySpan<string> args, out SlangReflection reflection)
+    {
+        using SlangCompileRequest request = session.Value!.CreateCompileRequest();
+
+        Compile(request, slang, args);
+
+        reflection = new(request.Handle);
+
+        return request.GetResult();
+    }
+
+    /// <summary>
+    /// Configures the compile request, optionally appends an in-memory source string as a translation unit,
+    /// and executes the compilation. Diagnostic messages produced by the Slang compiler are collected and
+    /// surfaced through the thrown exception when an error occurs.
+    /// </summary>
+    /// <param name="request">The compile request to use for compilation.</param>
+    /// <param name="slang">Optional Slang source code to compile from memory. If <see langword="null"/>, the source is expected to be supplied through <paramref name="args"/>.</param>
+    /// <param name="args">Command line arguments to pass to the compiler.</param>
+    /// <exception cref="Exception">Thrown when command line processing or compilation fails.</exception>
+    private static void Compile(SlangCompileRequest request, string? slang, ReadOnlySpan<string> args)
     {
         StringBuilder stringBuilder = new();
 
@@ -112,12 +151,15 @@ public static unsafe class SlangCompiler
             throw new Exception(stringBuilder.ToString());
         }
 
+        if (slang is not null)
+        {
+            request.AddTranslationUnitSourceString(slang, string.Empty);
+        }
+
         if (request.Compile() is not 0)
         {
             throw new Exception(stringBuilder.ToString());
         }
-
-        return request;
     }
 
     /// <summary>

@@ -52,6 +52,26 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     private static partial int spProcessCommandLineArguments(nint request, byte** args, int argCount);
 
     /// <summary>
+    /// Native function to add a new translation unit to the compile request.
+    /// </summary>
+    /// <param name="request">Handle to the compile request</param>
+    /// <param name="language">Source language identifier (1 = Slang)</param>
+    /// <param name="name">Optional translation unit name as a null-terminated UTF-8 string (may be null)</param>
+    /// <returns>The zero-based index of the newly created translation unit</returns>
+    [LibraryImport("slang-compiler")]
+    private static partial int spAddTranslationUnit(nint request, int language, byte* name);
+
+    /// <summary>
+    /// Native function to attach an in-memory source string to a translation unit.
+    /// </summary>
+    /// <param name="request">Handle to the compile request</param>
+    /// <param name="translationUnitIndex">Index of the translation unit returned by <see cref="spAddTranslationUnit"/></param>
+    /// <param name="path">Virtual file path used in diagnostic messages as a null-terminated UTF-8 string</param>
+    /// <param name="source">Null-terminated UTF-8 encoded source code</param>
+    [LibraryImport("slang-compiler")]
+    private static partial void spAddTranslationUnitSourceString(nint request, int translationUnitIndex, byte* path, byte* source);
+
+    /// <summary>
     /// Native function to execute the compilation.
     /// </summary>
     /// <param name="request">Handle to the compile request</param>
@@ -155,6 +175,32 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     public int Compile()
     {
         return spCompile(Handle);
+    }
+
+    /// <summary>
+    /// Creates a new Slang translation unit on this compile request and attaches the given
+    /// in-memory source string to it. This allows compilation of shader code that does not
+    /// reside on disk.
+    /// </summary>
+    /// <param name="source">The Slang source code to compile.</param>
+    /// <param name="path">Virtual file path used in diagnostic messages. Pass <see cref="string.Empty"/> when no path is meaningful.</param>
+    /// <returns>The zero-based index of the newly created translation unit.</returns>
+    public int AddTranslationUnitSourceString(string source, string path)
+    {
+        int translationUnitIndex = spAddTranslationUnit(Handle, 1, null);
+
+        using Utf8String sourceUtf8 = new(source);
+        using Utf8String pathUtf8 = new(path);
+
+        fixed (byte* pSource = sourceUtf8.Data)
+        {
+            fixed (byte* pPath = pathUtf8.Data)
+            {
+                spAddTranslationUnitSourceString(Handle, translationUnitIndex, pPath, pSource);
+            }
+        }
+
+        return translationUnitIndex;
     }
 
     /// <summary>
