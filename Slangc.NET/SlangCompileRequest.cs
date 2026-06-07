@@ -210,16 +210,16 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     public byte[] GetResult()
     {
         uint size;
-        spGetEntryPointCode(Handle, 0, &size);
+        byte* codePtr = spGetCompileRequestCode(Handle, &size);
 
-        if (size is not 0)
+        if (size is 0)
         {
             List<byte> codes = [];
 
             int i = 0;
             while (true)
             {
-                byte* codePtr = spGetEntryPointCode(Handle, i++, &size);
+                codePtr = spGetEntryPointCode(Handle, i++, &size);
 
                 if (size is 0)
                 {
@@ -231,12 +231,8 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
 
             return [.. codes];
         }
-        else
-        {
-            byte* codePtr = spGetCompileRequestCode(Handle, &size);
 
-            return [.. new ReadOnlySpan<byte>(codePtr, (int)size)];
-        }
+        return [.. new ReadOnlySpan<byte>(codePtr, (int)size)];
     }
 
     /// <summary>
