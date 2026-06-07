@@ -70,7 +70,7 @@ public static unsafe class SlangCompiler
     {
         using SlangCompileRequest request = session.Value!.CreateCompileRequest();
 
-        Compile(request, null, args);
+        Compile(request, args);
 
         return request.GetResult();
     }
@@ -86,7 +86,7 @@ public static unsafe class SlangCompiler
     {
         using SlangCompileRequest request = session.Value!.CreateCompileRequest();
 
-        Compile(request, null, args);
+        Compile(request, args);
 
         reflection = new(request.Handle);
 
@@ -103,11 +103,17 @@ public static unsafe class SlangCompiler
     /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
     public static byte[] Compile(string slang, params ReadOnlySpan<string> args)
     {
-        using SlangCompileRequest request = session.Value!.CreateCompileRequest();
+        string path = Path.GetTempFileName();
+        File.WriteAllText(path, slang);
 
-        Compile(request, slang, args);
-
-        return request.GetResult();
+        try
+        {
+            return Compile([path, .. args]);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 
     /// <summary>
@@ -122,25 +128,28 @@ public static unsafe class SlangCompiler
     /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
     public static byte[] CompileWithReflection(string slang, ReadOnlySpan<string> args, out SlangReflection reflection)
     {
-        using SlangCompileRequest request = session.Value!.CreateCompileRequest();
+        string path = Path.GetTempFileName();
+        File.WriteAllText(path, slang);
 
-        Compile(request, slang, args);
-
-        reflection = new(request.Handle);
-
-        return request.GetResult();
+        try
+        {
+            return CompileWithReflection([path, .. args], out reflection);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 
     /// <summary>
-    /// Configures the compile request, optionally appends an in-memory source string as a translation unit,
-    /// and executes the compilation. Diagnostic messages produced by the Slang compiler are collected and
-    /// surfaced through the thrown exception when an error occurs.
+    /// Configures the compile request from command line arguments and executes the compilation. Diagnostic
+    /// messages produced by the Slang compiler are collected and surfaced through the thrown exception when
+    /// an error occurs.
     /// </summary>
     /// <param name="request">The compile request to use for compilation.</param>
-    /// <param name="slang">Optional Slang source code to compile from memory. If <see langword="null"/>, the source is expected to be supplied through <paramref name="args"/>.</param>
     /// <param name="args">Command line arguments to pass to the compiler.</param>
     /// <exception cref="Exception">Thrown when command line processing or compilation fails.</exception>
-    private static void Compile(SlangCompileRequest request, string? slang, ReadOnlySpan<string> args)
+    private static void Compile(SlangCompileRequest request, ReadOnlySpan<string> args)
     {
         StringBuilder stringBuilder = new();
 
@@ -149,11 +158,6 @@ public static unsafe class SlangCompiler
         if (request.ProcessCommandLineArguments(args) is not 0)
         {
             throw new Exception(stringBuilder.ToString());
-        }
-
-        if (slang is not null)
-        {
-            request.AddTranslationUnitSourceString(slang, string.Empty);
         }
 
         if (request.Compile() is not 0)
