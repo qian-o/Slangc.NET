@@ -103,7 +103,7 @@ public static unsafe class SlangCompiler
     /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
     public static byte[] Compile(string slang, params ReadOnlySpan<string> args)
     {
-        string path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.slang");
+        string path = $"{Path.GetTempFileName()}.slang";
         File.WriteAllText(path, slang);
 
         try
@@ -128,7 +128,7 @@ public static unsafe class SlangCompiler
     /// <exception cref="Exception">Thrown when compilation fails, with the Slang diagnostic messages as the exception message.</exception>
     public static byte[] CompileWithReflection(string slang, ReadOnlySpan<string> args, out SlangReflection reflection)
     {
-        string path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.slang");
+        string path = $"{Path.GetTempFileName()}.slang";
         File.WriteAllText(path, slang);
 
         try
