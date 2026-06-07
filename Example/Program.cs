@@ -3,13 +3,14 @@ using Slangc.NET;
 
 string[] targets = ["hlsl", "glsl", "dxil", "spirv"];
 
+string slang = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"));
+
 foreach (string target in targets)
 {
     Stopwatch stopwatch = Stopwatch.StartNew();
 
     args =
     [
-        Path.Combine(AppContext.BaseDirectory, "Shaders", "Test.slang"),
         "-profile", "sm_6_6",
         "-matrix-layout-row-major",
         "-entry","VSMain", "-stage", "vertex",
@@ -17,7 +18,7 @@ foreach (string target in targets)
         "-target", target
     ];
 
-    byte[] shader = SlangCompiler.CompileWithReflection(args, out SlangReflection reflection);
+    byte[] shader = SlangCompiler.CompileWithReflection(slang, args, out SlangReflection reflection);
 
     stopwatch.Stop();
 
