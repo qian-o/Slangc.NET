@@ -67,7 +67,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="outSize">Pointer to receive the output size</param>
     /// <returns>Pointer to the compiled code</returns>
     [LibraryImport("slang-compiler")]
-    private static partial byte* spGetEntryPointCode(nint request, int entryPointIndex, uint* outSize);
+    private static partial byte* spGetEntryPointCode(nint request, int entryPointIndex, nuint* outSize);
 
     /// <summary>
     /// Native function to get the compiled result.
@@ -76,7 +76,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <param name="outSize">Pointer to receive the output size</param>
     /// <returns>Pointer to the compiled bytecode</returns>
     [LibraryImport("slang-compiler")]
-    private static partial byte* spGetCompileRequestCode(nint request, uint* outSize);
+    private static partial byte* spGetCompileRequestCode(nint request, nuint* outSize);
 
     /// <summary>
     /// Gets the native handle to the underlying Slang compile request.
@@ -163,7 +163,7 @@ public unsafe partial class SlangCompileRequest(nint handle) : IDisposable
     /// <returns>The compiled shader bytecode</returns>
     public byte[] GetResult()
     {
-        uint size;
+        nuint size;
         byte* codePtr = spGetCompileRequestCode(Handle, &size);
 
         if (size is 0)

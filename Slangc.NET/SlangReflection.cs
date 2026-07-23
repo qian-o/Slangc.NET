@@ -28,6 +28,32 @@ public unsafe partial class SlangReflection
     [LibraryImport("slang-compiler")]
     private static partial int spReflection_ToJson(nint reflection, nint request, SlangBlob** outBlob);
 
+    /// <summary>
+    /// Native function to get the number of entry points in reflection data.
+    /// </summary>
+    /// <param name="reflection">Handle to the reflection data</param>
+    /// <returns>Number of reflected entry points</returns>
+    [LibraryImport("slang-compiler")]
+    private static partial nuint spReflection_getEntryPointCount(nint reflection);
+
+    /// <summary>
+    /// Native function to get an entry point from reflection data by index.
+    /// </summary>
+    /// <param name="reflection">Handle to the reflection data</param>
+    /// <param name="index">Zero-based index of the entry point</param>
+    /// <returns>Handle to the reflected entry point</returns>
+    [LibraryImport("slang-compiler")]
+    private static partial nint spReflection_getEntryPointByIndex(nint reflection, nuint index);
+
+    /// <summary>
+    /// Native function to get the thread group dimensions of an entry point.
+    /// </summary>
+    /// <param name="entryPoint">Handle to the reflected entry point</param>
+    /// <param name="axisCount">Number of dimensions to write</param>
+    /// <param name="outSizeAlongAxis">Pointer to the output dimensions</param>
+    [LibraryImport("slang-compiler")]
+    private static partial void spReflectionEntryPoint_getComputeThreadGroupSize(nint entryPoint, nuint axisCount, nuint* outSizeAlongAxis);
+
     private readonly Lazy<(SlangParameter[] Parameters, SlangEntryPoint[] EntryPoints)>? deserialized;
 
     /// <summary>
@@ -49,6 +75,8 @@ public unsafe partial class SlangReflection
             return;
         }
 
+        uint[][] threadGroupSizes = GetThreadGroupSizes(reflection);
+
         Json = Marshal.PtrToStringUTF8((nint)outBlob->GetBufferPointer(), (int)outBlob->GetBufferSize()) ?? "";
 
         deserialized = new(() =>
@@ -64,6 +92,14 @@ public unsafe partial class SlangReflection
 
                 parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
                 entryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+
+                for (int i = 0; i < entryPoints.Length && i < threadGroupSizes.Length; i++)
+                {
+                    if (entryPoints[i].Stage is SlangStage.Compute or SlangStage.Mesh or SlangStage.Amplification && entryPoints[i].ThreadGroupSize.Length is 0 && threadGroupSizes[i].Length is 3)
+                    {
+                        entryPoints[i].ThreadGroupSize = threadGroupSizes[i];
+                    }
+                }
             }
             catch
             {
@@ -90,4 +126,35 @@ public unsafe partial class SlangReflection
     /// Each entry point represents a shader stage (vertex, fragment, compute, etc.).
     /// </summary>
     public SlangEntryPoint[] EntryPoints => deserialized?.Value.EntryPoints ?? [];
+
+    /// <summary>
+    /// Copies thread group dimensions from native reflection data before the compile request is released.
+    /// </summary>
+    /// <param name="reflection">Handle to the reflection data</param>
+    /// <returns>
+    /// Thread group dimensions indexed in the same order as the reflected entry points.
+    /// Entries without valid dimensions contain an empty array.
+    /// </returns>
+    private static uint[][] GetThreadGroupSizes(nint reflection)
+    {
+        uint[][] threadGroupSizes = new uint[spReflection_getEntryPointCount(reflection)][];
+
+        nuint* size = stackalloc nuint[3];
+        for (int i = 0; i < threadGroupSizes.Length; i++)
+        {
+            size[0] = size[1] = size[2] = 0;
+            spReflectionEntryPoint_getComputeThreadGroupSize(spReflection_getEntryPointByIndex(reflection, (nuint)i), 3, size);
+
+            if (size[0] is not 0 && size[1] is not 0 && size[2] is not 0)
+            {
+                threadGroupSizes[i] = [(uint)size[0], (uint)size[1], (uint)size[2]];
+            }
+            else
+            {
+                threadGroupSizes[i] = [];
+            }
+        }
+
+        return threadGroupSizes;
+    }
 }

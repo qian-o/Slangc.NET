@@ -32,6 +32,6 @@ public unsafe struct SlangBlob
     {
         SlangBlob* @this = (SlangBlob*)Unsafe.AsPointer(ref Unsafe.AsRef(in this));
 
-        return ((delegate* unmanaged[Stdcall]<SlangBlob*, ulong>)@this->LpVtbl[4])(@this);
+        return ((delegate* unmanaged[Stdcall]<SlangBlob*, nuint>)@this->LpVtbl[4])(@this);
     }
 };

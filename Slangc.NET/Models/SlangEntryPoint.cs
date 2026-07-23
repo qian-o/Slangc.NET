@@ -36,7 +36,7 @@ public class SlangEntryPoint
     public SlangParameter[] Parameters { get; set; }
 
     /// <summary>
-    /// Gets the thread group size for compute shaders (if applicable).
+    /// Gets the thread group size for compute, task, and mesh shaders (if applicable).
     /// This array contains the X, Y, Z dimensions of the thread group.
     /// </summary>
     public uint[] ThreadGroupSize { get; set; }
