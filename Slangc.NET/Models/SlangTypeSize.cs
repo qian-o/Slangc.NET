@@ -14,11 +14,11 @@ public class SlangTypeSize
     internal SlangTypeSize(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangParameterCategory>();
-        Value = reader["value"].DeserializeSize();
+        Value = reader["value"].DeserializeIntegerOrSentinel();
 
         if (reader.ContainsKey("alignment"))
         {
-            Alignment = reader["alignment"].DeserializeSize();
+            Alignment = reader["alignment"].DeserializeIntegerOrSentinel();
         }
     }
 

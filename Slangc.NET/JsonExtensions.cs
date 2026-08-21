@@ -74,7 +74,7 @@ internal static partial class JsonExtensions
         }
     }
 
-    public static long DeserializeSize(this JsonNode? node)
+    public static long DeserializeIntegerOrSentinel(this JsonNode? node)
     {
         if (node is null)
         {

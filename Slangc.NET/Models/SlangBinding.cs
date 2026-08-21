@@ -17,15 +17,15 @@ public class SlangBinding
 
         if (Kind is SlangParameterCategory.Uniform)
         {
-            Offset = reader["offset"].DeserializeSize();
-            Size = reader["size"].DeserializeSize();
-            ElementStride = reader["elementStride"].DeserializeSize();
+            Offset = reader["offset"].DeserializeIntegerOrSentinel();
+            Size = reader["size"].DeserializeIntegerOrSentinel();
+            ElementStride = reader["elementStride"].DeserializeIntegerOrSentinel();
         }
         else
         {
-            Space = reader.ContainsKey("space") ? reader["space"].DeserializeSize() : 0;
-            Index = reader["index"].DeserializeSize();
-            Count = reader.ContainsKey("count") ? reader["count"].DeserializeSize() : 1;
+            Space = reader.ContainsKey("space") ? reader["space"].DeserializeIntegerOrSentinel() : 0;
+            Index = reader["index"].DeserializeIntegerOrSentinel();
+            Count = reader.ContainsKey("count") ? reader["count"].DeserializeIntegerOrSentinel() : 1;
         }
 
         if (reader.ContainsKey("used"))

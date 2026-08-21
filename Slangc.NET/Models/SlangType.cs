@@ -30,12 +30,12 @@ public class SlangType
     {
         internal ArrayProperties(JsonObject reader)
         {
-            ElementCount = reader["elementCount"].DeserializeSize();
+            ElementCount = reader["elementCount"].DeserializeIntegerOrSentinel();
             ElementType = new(reader["elementType"]!.AsObject());
 
             if (reader.ContainsKey("uniformStride"))
             {
-                UniformStride = reader["uniformStride"].DeserializeSize();
+                UniformStride = reader["uniformStride"].DeserializeIntegerOrSentinel();
             }
         }
 
@@ -84,7 +84,7 @@ public class SlangType
         /// <summary>
         /// Gets the number of components in the vector. A value of -1 is unbounded; -2 is unknown.
         /// </summary>
-        public long ElementCount { get; } = reader["elementCount"].DeserializeSize();
+        public long ElementCount { get; } = reader["elementCount"].DeserializeIntegerOrSentinel();
 
         /// <summary>
         /// Gets the scalar type information for vector components.
