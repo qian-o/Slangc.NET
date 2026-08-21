@@ -17,7 +17,11 @@ public class SlangParameter
         UserAttributes = reader.ContainsKey("userAttribs") ? [.. reader["userAttribs"]!.AsArray().Select(static reader => new SlangUserAttribute(reader!.AsObject()))] : [];
         Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : reader.ContainsKey("binding") ? [new(reader["binding"]!.AsObject())] : [];
         Type = new(reader["type"]!.AsObject());
-        SemanticName = reader.ContainsKey("semanticName") ? reader["semanticName"].Deserialize<string>() : null;
+        Shared = reader["shared"].Deserialize<bool>();
+        Stage = reader["stage"].Deserialize<SlangStage>();
+        SemanticName = reader["semanticName"].Deserialize<string>();
+        SemanticIndex = reader["semanticIndex"].Deserialize<uint>();
+        Format = reader["format"].Deserialize<string>();
     }
 
     /// <summary>
@@ -31,18 +35,37 @@ public class SlangParameter
     public SlangUserAttribute[] UserAttributes { get; }
 
     /// <summary>
-    /// Gets the array of binding points for this parameter, if it spans multiple bindings (e.g., arrays of resources).
+    /// Gets all binding points associated with this parameter.
     /// </summary>
     public SlangBinding[] Bindings { get; }
 
     /// <summary>
-    /// Gets the type information for this parameter, including its structure and properties.
+    /// Gets the reflected parameter type.
     /// </summary>
     public SlangType Type { get; }
 
     /// <summary>
-    /// Gets the semantic name associated with this parameter, if it has one.
-    /// This is typically used for shader input/output parameters that are associated with specific semantics (e.g., POSITION, NORMAL, TEXCOORD).
+    /// Gets a value indicating whether the parameter is shared.
+    /// </summary>
+    public bool Shared { get; }
+
+    /// <summary>
+    /// Gets the shader stage associated with this parameter, when applicable.
+    /// </summary>
+    public SlangStage Stage { get; }
+
+    /// <summary>
+    /// Gets the semantic name associated with this parameter, when applicable.
     /// </summary>
     public string? SemanticName { get; }
+
+    /// <summary>
+    /// Gets the semantic index associated with this parameter.
+    /// </summary>
+    public uint SemanticIndex { get; }
+
+    /// <summary>
+    /// Gets the image format associated with this parameter, when available.
+    /// </summary>
+    public string? Format { get; }
 }

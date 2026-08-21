@@ -3,17 +3,16 @@
 namespace Slangc.NET;
 
 /// <summary>
-/// Represents a program parameter binding as used by an entry point.
+/// Represents layout metadata attached to a reflected variable.
 /// </summary>
-public class SlangNamedTypeBinding
+public class SlangVariableLayout
 {
     /// <summary>
-    /// Initializes a named type binding from JSON reflection data.
+    /// Initializes variable layout information from JSON reflection data.
     /// </summary>
-    /// <param name="reader">JSON object containing entry-point binding information.</param>
-    internal SlangNamedTypeBinding(JsonObject reader)
+    /// <param name="reader">JSON object containing variable layout information.</param>
+    internal SlangVariableLayout(JsonObject reader)
     {
-        Name = reader["name"].Deserialize<string>();
         Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : reader.ContainsKey("binding") ? [new(reader["binding"]!.AsObject())] : [];
         Stage = reader["stage"].Deserialize<SlangStage>();
         SemanticName = reader["semanticName"].Deserialize<string>();
@@ -22,32 +21,27 @@ public class SlangNamedTypeBinding
     }
 
     /// <summary>
-    /// Gets the program parameter name.
-    /// </summary>
-    public string Name { get; }
-
-    /// <summary>
-    /// Gets all binding points associated with this parameter.
+    /// Gets all binding points associated with this layout.
     /// </summary>
     public SlangBinding[] Bindings { get; }
 
     /// <summary>
-    /// Gets the shader stage associated with this binding, when applicable.
+    /// Gets the shader stage associated with this layout, when applicable.
     /// </summary>
     public SlangStage Stage { get; }
 
     /// <summary>
-    /// Gets the semantic name associated with this binding, when applicable.
+    /// Gets the semantic name associated with this layout, when applicable.
     /// </summary>
     public string? SemanticName { get; }
 
     /// <summary>
-    /// Gets the semantic index associated with this binding.
+    /// Gets the semantic index associated with this layout.
     /// </summary>
     public uint SemanticIndex { get; }
 
     /// <summary>
-    /// Gets the image format associated with this binding, when available.
+    /// Gets the image format associated with this layout, when available.
     /// </summary>
     public string? Format { get; }
 }

@@ -48,5 +48,10 @@ public enum SlangResourceShape
     /// <summary>
     /// Acceleration structure for raytracing.
     /// </summary>
-    AccelerationStructure
+    AccelerationStructure,
+
+    /// <summary>
+    /// Subpass input attachment.
+    /// </summary>
+    SubpassInput
 }

@@ -108,5 +108,5 @@ public enum SlangTypeKind
     /// <summary>
     /// No specific type, used for cases where the type is not applicable or not defined.
     /// </summary>
-    None = Unknown
+    None
 }

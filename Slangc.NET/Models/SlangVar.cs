@@ -15,8 +15,13 @@ public class SlangVar
     {
         Name = reader["name"].Deserialize<string>();
         Type = new(reader["type"]!.AsObject());
-        Binding = reader.ContainsKey("binding") ? new(reader["binding"]!.AsObject()) : null;
-        SemanticName = reader.ContainsKey("semanticName") ? reader["semanticName"].Deserialize<string>() : null;
+        UserAttributes = reader.ContainsKey("userAttribs") ? [.. reader["userAttribs"]!.AsArray().Select(static reader => new SlangUserAttribute(reader!.AsObject()))] : [];
+        Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : reader.ContainsKey("binding") ? [new(reader["binding"]!.AsObject())] : [];
+        Shared = reader["shared"].Deserialize<bool>();
+        Stage = reader["stage"].Deserialize<SlangStage>();
+        SemanticName = reader["semanticName"].Deserialize<string>();
+        SemanticIndex = reader["semanticIndex"].Deserialize<uint>();
+        Format = reader["format"].Deserialize<string>();
     }
 
     /// <summary>
@@ -25,19 +30,42 @@ public class SlangVar
     public string Name { get; }
 
     /// <summary>
-    /// Gets the type information for this variable.
+    /// Gets the reflected variable type.
     /// </summary>
     public SlangType Type { get; }
 
     /// <summary>
-    /// Gets the binding information for this variable, if it has one.
-    /// May be null for variables that don't have explicit bindings.
+    /// Gets the user-defined attributes associated with this variable.
     /// </summary>
-    public SlangBinding? Binding { get; }
+    public SlangUserAttribute[] UserAttributes { get; }
 
     /// <summary>
-    /// Gets the semantic name associated with this variable, if it has one.
-    /// This is typically used for shader input/output variables that are associated with specific semantics (e.g., POSITION, NORMAL, TEXCOORD).
+    /// Gets all binding points associated with this variable.
+    /// </summary>
+    public SlangBinding[] Bindings { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the variable is shared.
+    /// </summary>
+    public bool Shared { get; }
+
+    /// <summary>
+    /// Gets the shader stage associated with this variable, when applicable.
+    /// </summary>
+    public SlangStage Stage { get; }
+
+    /// <summary>
+    /// Gets the semantic name associated with this variable, when applicable.
     /// </summary>
     public string? SemanticName { get; }
+
+    /// <summary>
+    /// Gets the semantic index associated with this variable.
+    /// </summary>
+    public uint SemanticIndex { get; }
+
+    /// <summary>
+    /// Gets the image format associated with this variable, when available.
+    /// </summary>
+    public string? Format { get; }
 }

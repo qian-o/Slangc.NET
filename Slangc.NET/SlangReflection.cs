@@ -54,7 +54,7 @@ public unsafe partial class SlangReflection
     [LibraryImport("slang-compiler")]
     private static partial void spReflectionEntryPoint_getComputeThreadGroupSize(nint entryPoint, nuint axisCount, nuint* outSizeAlongAxis);
 
-    private readonly Lazy<(SlangParameter[] Parameters, SlangEntryPoint[] EntryPoints)>? deserialized;
+    private readonly Lazy<(string Version, SlangScope? GlobalScope, SlangParameter[] Parameters, SlangEntryPoint[] EntryPoints)>? deserialized;
 
     /// <summary>
     /// Initializes a new instance of the SlangReflection class from a compile request.
@@ -81,6 +81,8 @@ public unsafe partial class SlangReflection
 
         deserialized = new(() =>
         {
+            string version = "1.0";
+            SlangScope? globalScope = null;
             SlangParameter[] parameters = [];
             SlangEntryPoint[] entryPoints = [];
 
@@ -90,12 +92,14 @@ public unsafe partial class SlangReflection
 
                 JsonObject reader = JsonObject.Create(document.RootElement)!;
 
-                parameters = [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))];
-                entryPoints = [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))];
+                version = reader["version"].Deserialize<string>() ?? "1.0";
+                globalScope = reader.ContainsKey("globalScope") ? new(reader["globalScope"]!.AsObject()) : null;
+                parameters = reader.ContainsKey("parameters") ? [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))] : [];
+                entryPoints = reader.ContainsKey("entryPoints") ? [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))] : [];
 
                 for (int i = 0; i < entryPoints.Length && i < threadGroupSizes.Length; i++)
                 {
-                    if (entryPoints[i].Stage is SlangStage.Compute or SlangStage.Mesh or SlangStage.Amplification && entryPoints[i].ThreadGroupSize.Length is 0 && threadGroupSizes[i].Length is 3)
+                    if ((entryPoints[i].Stage is SlangStage.Compute or SlangStage.Mesh or SlangStage.Amplification or SlangStage.Node) && entryPoints[i].ThreadGroupSize.Length is 0 && threadGroupSizes[i].Length is 3)
                     {
                         entryPoints[i].ThreadGroupSize = threadGroupSizes[i];
                     }
@@ -106,7 +110,7 @@ public unsafe partial class SlangReflection
                 // ignored
             }
 
-            return (parameters, entryPoints);
+            return (version, globalScope, parameters, entryPoints);
         });
     }
 
@@ -114,6 +118,16 @@ public unsafe partial class SlangReflection
     /// Gets the reflection information as a JSON string.
     /// </summary>
     public string Json { get; } = string.Empty;
+
+    /// <summary>
+    /// Gets the Slang reflection JSON schema version. JSON produced before schema version 1.1 is reported as 1.0.
+    /// </summary>
+    public string Version => deserialized?.Value.Version ?? "1.0";
+
+    /// <summary>
+    /// Gets the complete global parameter scope, when the JSON contains one.
+    /// </summary>
+    public SlangScope? GlobalScope => deserialized?.Value.GlobalScope;
 
     /// <summary>
     /// Gets the array of shader parameters parsed from the reflection data.

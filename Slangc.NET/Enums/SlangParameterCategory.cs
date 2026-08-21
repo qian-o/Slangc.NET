@@ -83,5 +83,50 @@ public enum SlangParameterCategory
     /// <summary>
     /// Metal argument buffer element.
     /// </summary>
-    MetalArgumentBufferElement
+    MetalArgumentBufferElement,
+
+    /// <summary>
+    /// Ray payload data.
+    /// </summary>
+    RayPayload,
+
+    /// <summary>
+    /// Ray-tracing hit attributes.
+    /// </summary>
+    HitAttributes,
+
+    /// <summary>
+    /// Callable shader payload data.
+    /// </summary>
+    CallablePayload,
+
+    /// <summary>
+    /// Shader record data.
+    /// </summary>
+    ShaderRecord,
+
+    /// <summary>
+    /// Existential type parameter data.
+    /// </summary>
+    ExistentialTypeParam,
+
+    /// <summary>
+    /// Existential object parameter data.
+    /// </summary>
+    ExistentialObjectParam,
+
+    /// <summary>
+    /// Input attachment index.
+    /// </summary>
+    InputAttachmentIndex,
+
+    /// <summary>
+    /// Metal vertex attribute.
+    /// </summary>
+    MetalAttribute,
+
+    /// <summary>
+    /// Metal payload data.
+    /// </summary>
+    MetalPayload
 }

@@ -13,9 +13,14 @@ public class SlangType
     public class StructProperties(JsonObject reader)
     {
         /// <summary>
+        /// Gets the reflected struct name, when available.
+        /// </summary>
+        public string? Name { get; } = reader["name"].Deserialize<string>();
+
+        /// <summary>
         /// Gets all fields defined in the struct.
         /// </summary>
-        public SlangVar[] Fields { get; } = [.. reader["fields"]!.AsArray().Select(static reader => new SlangVar(reader!.AsObject()))];
+        public SlangVar[] Fields { get; } = reader.ContainsKey("fields") ? [.. reader["fields"]!.AsArray().Select(static reader => new SlangVar(reader!.AsObject()))] : [];
     }
 
     /// <summary>
@@ -24,14 +29,14 @@ public class SlangType
     public class ArrayProperties(JsonObject reader)
     {
         /// <summary>
-        /// Gets the number of elements in the array.
+        /// Gets the number of elements in the array. A value of -1 is unbounded; -2 is unknown.
         /// </summary>
-        public uint ElementCount { get; } = reader["elementCount"].Deserialize<uint>();
+        public long ElementCount { get; } = reader["elementCount"].DeserializeSize();
 
         /// <summary>
-        /// Gets the stride (in bytes) of each element in the uniform buffer layout.
+        /// Gets the stride (in bytes) of each element in the uniform buffer layout. A value of -1 is unbounded; -2 is unknown.
         /// </summary>
-        public uint UniformStride { get; } = reader["uniformStride"].Deserialize<uint>();
+        public long UniformStride { get; } = reader["uniformStride"].DeserializeSize();
 
         /// <summary>
         /// Gets the type information for array elements.
@@ -71,11 +76,6 @@ public class SlangType
         public uint ElementCount { get; } = reader["elementCount"].Deserialize<uint>();
 
         /// <summary>
-        /// Gets the stride (in bytes) of the vector in the uniform buffer layout.
-        /// </summary>
-        public uint UniformStride { get; } = reader["uniformStride"].Deserialize<uint>();
-
-        /// <summary>
         /// Gets the scalar type information for vector components.
         /// </summary>
         public SlangType ElementType { get; } = new(reader["elementType"]!.AsObject());
@@ -103,14 +103,14 @@ public class SlangType
         public SlangType ElementType { get; } = new(reader["elementType"]!.AsObject());
 
         /// <summary>
-        /// Gets the binding layout information for the constant buffer container itself.
+        /// Gets the variable layout information for the constant buffer container itself.
         /// </summary>
-        public SlangBinding ContainerVarLayout { get; } = new(reader["containerVarLayout"]!.AsObject());
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
 
         /// <summary>
         /// Gets the variable layout information for elements inside the constant buffer.
         /// </summary>
-        public SlangVar ElementVarLayout { get; } = new(reader["elementVarLayout"]!.AsObject());
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ public class SlangType
         /// <summary>
         /// Gets the access mode of the resource (read-only, write-only, read-write, etc.).
         /// </summary>
-        public SlangResourceAccess Access { get; } = reader["access"].Deserialize<SlangResourceAccess>();
+        public SlangResourceAccess Access { get; } = reader.ContainsKey("access") ? reader["access"].Deserialize<SlangResourceAccess>() : SlangResourceAccess.Read;
 
         /// <summary>
         /// Gets the result type of a resource access (e.g., the data type returned by a texture sample).
@@ -166,14 +166,14 @@ public class SlangType
         public SlangType ElementType { get; } = new(reader["elementType"]!.AsObject());
 
         /// <summary>
-        /// Gets the binding layout information for the texture buffer container itself.
+        /// Gets the variable layout information for the texture buffer container itself.
         /// </summary>
-        public SlangBinding ContainerVarLayout { get; } = new(reader["containerVarLayout"]!.AsObject());
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
 
         /// <summary>
         /// Gets the variable layout information for elements inside the texture buffer.
         /// </summary>
-        public SlangVar ElementVarLayout { get; } = new(reader["elementVarLayout"]!.AsObject());
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
     }
 
     /// <summary>
@@ -198,14 +198,35 @@ public class SlangType
         public SlangType ElementType { get; } = new(reader["elementType"]!.AsObject());
 
         /// <summary>
-        /// Gets the binding layout information for the parameter block container itself.
+        /// Gets the variable layout information for the parameter block container itself.
         /// </summary>
-        public SlangBinding ContainerVarLayout { get; } = new(reader["containerVarLayout"]!.AsObject());
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
 
         /// <summary>
         /// Gets the variable layout information for elements inside the parameter block.
         /// </summary>
-        public SlangVar ElementVarLayout { get; } = new(reader["elementVarLayout"]!.AsObject());
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
+    }
+
+    /// <summary>
+    /// Properties for output stream types, including their element and optional layout information.
+    /// </summary>
+    public class OutputStreamProperties(JsonObject reader)
+    {
+        /// <summary>
+        /// Gets the stream element type.
+        /// </summary>
+        public SlangType ElementType { get; } = new(reader["elementType"]!.AsObject());
+
+        /// <summary>
+        /// Gets the container variable layout when this JSON node describes a type layout.
+        /// </summary>
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
+
+        /// <summary>
+        /// Gets the element variable layout when this JSON node describes a type layout.
+        /// </summary>
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
     }
 
     /// <summary>
@@ -216,7 +237,12 @@ public class SlangType
         /// <summary>
         /// Gets the name of the value type this pointer points to.
         /// </summary>
-        public string ValueType { get; } = reader["valueType"]!.Deserialize<string>();
+        public string? ValueType { get; } = reader["valueType"].Deserialize<string>();
+
+        /// <summary>
+        /// Gets the pointed-to type when this JSON node describes a type rather than a type layout.
+        /// </summary>
+        public SlangType? TargetType { get; } = reader["targetType"] is JsonObject targetType ? new(targetType) : null;
     }
 
     /// <summary>
@@ -238,6 +264,8 @@ public class SlangType
     internal SlangType(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangTypeKind>();
+        Sizes = reader.ContainsKey("sizes") ? [.. reader["sizes"]!.AsArray().Select(static reader => new SlangTypeSize(reader!.AsObject()))] : [];
+        UserAttributes = reader.ContainsKey("userAttribs") ? [.. reader["userAttribs"]!.AsArray().Select(static reader => new SlangUserAttribute(reader!.AsObject()))] : [];
 
         switch (Kind)
         {
@@ -271,6 +299,9 @@ public class SlangType
             case SlangTypeKind.ParameterBlock:
                 ParameterBlock = new(reader);
                 break;
+            case SlangTypeKind.OutputStream:
+                OutputStream = new(reader);
+                break;
             case SlangTypeKind.Pointer:
                 Pointer = new(reader);
                 break;
@@ -286,6 +317,16 @@ public class SlangType
     /// Gets the kind of this type.
     /// </summary>
     public SlangTypeKind Kind { get; }
+
+    /// <summary>
+    /// Gets the reflected sizes of this type in each layout unit.
+    /// </summary>
+    public SlangTypeSize[] Sizes { get; }
+
+    /// <summary>
+    /// Gets the user-defined attributes associated with this type.
+    /// </summary>
+    public SlangUserAttribute[] UserAttributes { get; }
 
     /// <summary>
     /// Gets the struct properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Struct"/>.
@@ -336,6 +377,11 @@ public class SlangType
     /// Gets the parameter block properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.ParameterBlock"/>.
     /// </summary>
     public ParameterBlockProperties? ParameterBlock { get; }
+
+    /// <summary>
+    /// Gets the output stream properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.OutputStream"/>.
+    /// </summary>
+    public OutputStreamProperties? OutputStream { get; }
 
     /// <summary>
     /// Gets the pointer properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Pointer"/>.

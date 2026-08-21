@@ -48,5 +48,10 @@ public enum SlangStage
     /// <summary>
     /// Amplification shader stage - used in advanced rendering techniques to control mesh generation and amplification.
     /// </summary>
-    Amplification
+    Amplification,
+
+    /// <summary>
+    /// Work graph node shader stage.
+    /// </summary>
+    Node
 }

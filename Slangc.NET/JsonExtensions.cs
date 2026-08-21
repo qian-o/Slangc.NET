@@ -13,9 +13,14 @@ internal static partial class JsonExtensions
     {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (reader.TokenType is JsonTokenType.True or JsonTokenType.False)
+            {
+                return reader.GetBoolean();
+            }
+
             if (reader.TokenType is JsonTokenType.Number)
             {
-                return reader.GetUInt32() is not 0;
+                return reader.GetUInt64() is not 0;
             }
 
             throw new JsonException($"Unexpected token {reader.TokenType} when parsing boolean.");
@@ -28,10 +33,12 @@ internal static partial class JsonExtensions
     }
 
     [JsonSerializable(typeof(uint))]
+    [JsonSerializable(typeof(long))]
     [JsonSerializable(typeof(bool))]
     [JsonSerializable(typeof(double))]
     [JsonSerializable(typeof(string))]
     [JsonSerializable(typeof(SlangStage))]
+    [JsonSerializable(typeof(SlangScopeKind))]
     [JsonSerializable(typeof(SlangTypeKind))]
     [JsonSerializable(typeof(SlangScalarType))]
     [JsonSerializable(typeof(SlangResourceShape))]
@@ -60,5 +67,21 @@ internal static partial class JsonExtensions
         {
             return default!;
         }
+    }
+
+    public static long DeserializeSize(this JsonNode? node)
+    {
+        if (node?.GetValueKind() is JsonValueKind.String)
+        {
+            return node.Deserialize<string>() switch
+            {
+                "unbounded" => -1,
+                "unknown" => -2,
+                string value => throw new JsonException($"Unexpected size value '{value}'."),
+                _ => throw new JsonException("Size value cannot be null.")
+            };
+        }
+
+        return node.Deserialize<long>();
     }
 }

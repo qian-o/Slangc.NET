@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 
 namespace Slangc.NET;
 
@@ -15,12 +14,13 @@ public class SlangBinding
     internal SlangBinding(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangParameterCategory>();
-        Offset = reader["offset"].Deserialize<uint>();
-        Size = reader["size"].Deserialize<uint>();
-        Space = reader["space"].Deserialize<uint>();
-        Index = reader["index"].Deserialize<uint>();
-        Count = reader.ContainsKey("count") ? reader["count"]!.GetValueKind() is JsonValueKind.String ? 0 : reader["count"].Deserialize<uint>() : 1;
-        Used = !reader.ContainsKey("used") || reader["used"].Deserialize<bool>();
+        Offset = reader["offset"].DeserializeSize();
+        Size = reader["size"].DeserializeSize();
+        ElementStride = reader["elementStride"].DeserializeSize();
+        Space = reader["space"].DeserializeSize();
+        Index = reader["index"].DeserializeSize();
+        Count = reader.ContainsKey("count") ? reader["count"].DeserializeSize() : 1;
+        Used = reader.ContainsKey("used") ? reader["used"].Deserialize<bool>() : null;
     }
 
     /// <summary>
@@ -29,32 +29,37 @@ public class SlangBinding
     public SlangParameterCategory Kind { get; }
 
     /// <summary>
-    /// Gets the offset within the binding space.
+    /// Gets the offset within the binding space. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public uint Offset { get; }
+    public long Offset { get; }
 
     /// <summary>
-    /// Gets the size of the binding in bytes.
+    /// Gets the size of the binding in bytes. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public uint Size { get; }
+    public long Size { get; }
 
     /// <summary>
-    /// Gets the binding space (register space in DirectX terminology).
+    /// Gets the stride between elements in this binding. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public uint Space { get; }
+    public long ElementStride { get; }
 
     /// <summary>
-    /// Gets the binding index (register number in DirectX terminology).
+    /// Gets the binding space (register space in DirectX terminology). A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public uint Index { get; }
+    public long Space { get; }
 
     /// <summary>
-    /// Gets the number of elements in this binding (for arrays).
+    /// Gets the binding index (register number in DirectX terminology). A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public uint Count { get; }
+    public long Index { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this binding is used by the shader.
+    /// Gets the number of elements in this binding (for arrays). A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public bool Used { get; }
+    public long Count { get; }
+
+    /// <summary>
+    /// Gets whether this binding is used by the shader, or <c>null</c> when Slang did not emit usage information.
+    /// </summary>
+    public bool? Used { get; }
 }

@@ -15,9 +15,13 @@ public class SlangEntryPoint
     {
         Name = reader["name"].Deserialize<string>();
         Stage = reader["stage"].Deserialize<SlangStage>();
+        Scope = reader.ContainsKey("scope") ? new(reader["scope"]!.AsObject()) : null;
         Parameters = reader.ContainsKey("parameters") ? [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))] : [];
-        ThreadGroupSize = reader.ContainsKey("threadGroupSize") ? [.. reader["threadGroupSize"]!.AsArray().Select(static reader => reader!.Deserialize<uint>())] : [];
+        Result = reader.ContainsKey("result") ? new(reader["result"]!.AsObject()) : null;
+        ThreadGroupSize = reader.ContainsKey("threadGroupSize") ? [.. reader["threadGroupSize"]!.AsArray().Select(static reader => reader.Deserialize<uint>())] : [];
         Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangNamedTypeBinding(reader!.AsObject()))] : [];
+        UsesAnySampleRateInput = reader["usesAnySampleRateInput"].Deserialize<bool>();
+        UserAttributes = reader.ContainsKey("userAttribs") ? [.. reader["userAttribs"]!.AsArray().Select(static reader => new SlangUserAttribute(reader!.AsObject()))] : [];
     }
 
     /// <summary>
@@ -31,9 +35,19 @@ public class SlangEntryPoint
     public SlangStage Stage { get; }
 
     /// <summary>
+    /// Gets the complete parameter scope for this entry point, when the JSON contains one.
+    /// </summary>
+    public SlangScope? Scope { get; }
+
+    /// <summary>
     /// Gets the parameters associated with this entry point.
     /// </summary>
     public SlangParameter[] Parameters { get; set; }
+
+    /// <summary>
+    /// Gets the entry-point result, when one is reflected.
+    /// </summary>
+    public SlangParameter? Result { get; }
 
     /// <summary>
     /// Gets the thread group size for compute, task, and mesh shaders (if applicable).
@@ -46,4 +60,14 @@ public class SlangEntryPoint
     /// These represent the resources that need to be bound when using this entry point.
     /// </summary>
     public SlangNamedTypeBinding[] Bindings { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the entry point uses any sample-rate input.
+    /// </summary>
+    public bool UsesAnySampleRateInput { get; }
+
+    /// <summary>
+    /// Gets the user-defined attributes associated with the entry point.
+    /// </summary>
+    public SlangUserAttribute[] UserAttributes { get; }
 }

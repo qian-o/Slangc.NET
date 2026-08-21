@@ -1,4 +1,6 @@
-﻿namespace Slangc.NET;
+﻿using System.Text.Json.Serialization;
+
+namespace Slangc.NET;
 
 /// <summary>
 /// Specifies the scalar data types available in shaders.
@@ -73,5 +75,32 @@ public enum SlangScalarType
     /// <summary>
     /// 64-bit floating point number (double precision).
     /// </summary>
-    Float64
+    Float64,
+
+    /// <summary>
+    /// Signed integer with the native pointer width.
+    /// </summary>
+    IntPtr,
+
+    /// <summary>
+    /// Unsigned integer with the native pointer width.
+    /// </summary>
+    UIntPtr,
+
+    /// <summary>
+    /// 16-bit brain floating point number.
+    /// </summary>
+    BFloat16,
+
+    /// <summary>
+    /// 8-bit floating point number with four exponent bits and three mantissa bits.
+    /// </summary>
+    [JsonStringEnumMemberName("float_e4m3")]
+    FloatE4M3,
+
+    /// <summary>
+    /// 8-bit floating point number with five exponent bits and two mantissa bits.
+    /// </summary>
+    [JsonStringEnumMemberName("float_e5m2")]
+    FloatE5M2
 }
