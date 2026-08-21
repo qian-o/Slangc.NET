@@ -116,12 +116,12 @@ public class SlangType
         /// <summary>
         /// Gets the variable layout information for the constant buffer container itself.
         /// </summary>
-        public SlangVariableLayout ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null!;
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
 
         /// <summary>
         /// Gets the variable layout information for elements inside the constant buffer.
         /// </summary>
-        public SlangVar ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null!;
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ public class SlangType
         /// Gets the result type of a resource access (e.g., the data type returned by a texture sample).
         /// This property is applicable to resource shapes for which Slang emits a result type.
         /// </summary>
-        public SlangType ResultType { get; } = reader.ContainsKey("resultType") ? new(reader["resultType"]!.AsObject()) : null!;
+        public SlangType? ResultType { get; } = reader.ContainsKey("resultType") ? new(reader["resultType"]!.AsObject()) : null;
     }
 
     /// <summary>
@@ -179,12 +179,12 @@ public class SlangType
         /// <summary>
         /// Gets the variable layout information for the texture buffer container itself.
         /// </summary>
-        public SlangVariableLayout ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null!;
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
 
         /// <summary>
         /// Gets the variable layout information for elements inside the texture buffer.
         /// </summary>
-        public SlangVar ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null!;
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
     }
 
     /// <summary>
@@ -211,12 +211,12 @@ public class SlangType
         /// <summary>
         /// Gets the variable layout information for the parameter block container itself.
         /// </summary>
-        public SlangVariableLayout ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null!;
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
 
         /// <summary>
         /// Gets the variable layout information for elements inside the parameter block.
         /// </summary>
-        public SlangVar ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null!;
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
     }
 
     /// <summary>
@@ -232,12 +232,12 @@ public class SlangType
         /// <summary>
         /// Gets the container variable layout when this JSON node describes a type layout.
         /// </summary>
-        public SlangVariableLayout ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null!;
+        public SlangVariableLayout? ContainerVarLayout { get; } = reader["containerVarLayout"] is JsonObject containerVarLayout ? new(containerVarLayout) : null;
 
         /// <summary>
         /// Gets the element variable layout when this JSON node describes a type layout.
         /// </summary>
-        public SlangVar ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null!;
+        public SlangVar? ElementVarLayout { get; } = reader["elementVarLayout"] is JsonObject elementVarLayout ? new(elementVarLayout) : null;
     }
 
     /// <summary>
@@ -253,7 +253,7 @@ public class SlangType
         /// <summary>
         /// Gets the pointed-to type when this JSON node describes a type rather than a type layout.
         /// </summary>
-        public SlangType TargetType { get; } = reader["targetType"] is JsonObject targetType ? new(targetType) : null!;
+        public SlangType? TargetType { get; } = reader["targetType"] is JsonObject targetType ? new(targetType) : null;
     }
 
     /// <summary>
@@ -342,65 +342,65 @@ public class SlangType
     /// <summary>
     /// Gets the struct properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Struct"/>.
     /// </summary>
-    public StructProperties Struct { get; } = null!;
+    public StructProperties? Struct { get; }
 
     /// <summary>
     /// Gets the array properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Array"/>.
     /// </summary>
-    public ArrayProperties Array { get; } = null!;
+    public ArrayProperties? Array { get; }
 
     /// <summary>
     /// Gets the matrix properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Matrix"/>.
     /// </summary>
-    public MatrixProperties Matrix { get; } = null!;
+    public MatrixProperties? Matrix { get; }
 
     /// <summary>
     /// Gets the vector properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Vector"/>.
     /// </summary>
-    public VectorProperties Vector { get; } = null!;
+    public VectorProperties? Vector { get; }
 
     /// <summary>
     /// Gets the scalar properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Scalar"/>.
     /// </summary>
-    public ScalarProperties Scalar { get; } = null!;
+    public ScalarProperties? Scalar { get; }
 
     /// <summary>
     /// Gets the constant buffer properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.ConstantBuffer"/>.
     /// </summary>
-    public ConstantBufferProperties ConstantBuffer { get; } = null!;
+    public ConstantBufferProperties? ConstantBuffer { get; }
 
     /// <summary>
     /// Gets the resource properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Resource"/>.
     /// </summary>
-    public ResourceProperties Resource { get; } = null!;
+    public ResourceProperties? Resource { get; }
 
     /// <summary>
     /// Gets the texture buffer properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.TextureBuffer"/>.
     /// </summary>
-    public TextureBufferProperties TextureBuffer { get; } = null!;
+    public TextureBufferProperties? TextureBuffer { get; }
 
     /// <summary>
     /// Gets the shader storage buffer properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.ShaderStorageBuffer"/>.
     /// </summary>
-    public ShaderStorageBufferProperties ShaderStorageBuffer { get; } = null!;
+    public ShaderStorageBufferProperties? ShaderStorageBuffer { get; }
 
     /// <summary>
     /// Gets the parameter block properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.ParameterBlock"/>.
     /// </summary>
-    public ParameterBlockProperties ParameterBlock { get; } = null!;
+    public ParameterBlockProperties? ParameterBlock { get; }
 
     /// <summary>
     /// Gets the output stream properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.OutputStream"/>.
     /// </summary>
-    public OutputStreamProperties OutputStream { get; } = null!;
+    public OutputStreamProperties? OutputStream { get; }
 
     /// <summary>
     /// Gets the pointer properties. Non-null when <see cref="Kind"/> is <see cref="SlangTypeKind.Pointer"/>.
     /// </summary>
-    public PointerProperties Pointer { get; } = null!;
+    public PointerProperties? Pointer { get; }
 
     /// <summary>
     /// Gets the named type properties. Non-null when <see cref="Kind"/> is a generic type parameter, interface, or feedback type.
     /// </summary>
-    public NamedTypeProperties NamedType { get; } = null!;
+    public NamedTypeProperties? NamedType { get; }
 }

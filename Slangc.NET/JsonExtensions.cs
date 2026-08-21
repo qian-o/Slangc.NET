@@ -67,6 +67,7 @@ internal static partial class JsonExtensions
         try
         {
             object? value = node.Deserialize(typeof(T), context);
+
             return value is null ? GetDefault<T>() : (T)value;
         }
         catch (JsonException)

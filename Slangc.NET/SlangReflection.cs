@@ -119,7 +119,7 @@ public unsafe partial class SlangReflection
     /// <summary>
     /// Gets the complete global parameter scope, when the JSON contains one.
     /// </summary>
-    public SlangScope GlobalScope => deserialized?.Value.GlobalScope!;
+    public SlangScope? GlobalScope => deserialized?.Value.GlobalScope;
 
     /// <summary>
     /// Gets the array of shader parameters parsed from the reflection data.
