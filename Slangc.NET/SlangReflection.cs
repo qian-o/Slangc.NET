@@ -151,14 +151,7 @@ public unsafe partial class SlangReflection
             size[0] = size[1] = size[2] = 0;
             spReflectionEntryPoint_getComputeThreadGroupSize(spReflection_getEntryPointByIndex(reflection, (nuint)i), 3, size);
 
-            if (size[0] is not 0 && size[1] is not 0 && size[2] is not 0)
-            {
-                threadGroupSizes[i] = [(uint)size[0], (uint)size[1], (uint)size[2]];
-            }
-            else
-            {
-                threadGroupSizes[i] = [];
-            }
+            threadGroupSizes[i] = size[0] is not 0 && size[1] is not 0 && size[2] is not 0 ? [(uint)size[0], (uint)size[1], (uint)size[2]] : [];
         }
 
         return threadGroupSizes;
