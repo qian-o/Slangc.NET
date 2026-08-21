@@ -25,9 +25,9 @@ public class SlangVar
     }
 
     /// <summary>
-    /// Gets the name of the variable, when emitted.
+    /// Gets the name of the variable, or an empty string when not emitted.
     /// </summary>
-    public string? Name { get; }
+    public string Name { get; }
 
     /// <summary>
     /// Gets the reflected variable type.
@@ -57,7 +57,7 @@ public class SlangVar
     /// <summary>
     /// Gets the semantic name associated with this variable, when applicable.
     /// </summary>
-    public string? SemanticName { get; }
+    public string SemanticName { get; }
 
     /// <summary>
     /// Gets the semantic index associated with this variable.
@@ -67,5 +67,5 @@ public class SlangVar
     /// <summary>
     /// Gets the image format associated with this variable, when available.
     /// </summary>
-    public string? Format { get; }
+    public string Format { get; }
 }

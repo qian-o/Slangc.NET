@@ -28,7 +28,10 @@ public class SlangBinding
             Count = reader.ContainsKey("count") ? reader["count"].DeserializeSize() : 1;
         }
 
-        Used = reader.ContainsKey("used") ? reader["used"].Deserialize<bool>() : null;
+        if (reader.ContainsKey("used"))
+        {
+            Used = reader["used"].Deserialize<bool>();
+        }
     }
 
     /// <summary>
@@ -37,37 +40,37 @@ public class SlangBinding
     public SlangParameterCategory Kind { get; }
 
     /// <summary>
-    /// Gets the offset within uniform data, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the offset within uniform data. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long? Offset { get; }
+    public long Offset { get; }
 
     /// <summary>
-    /// Gets the size of uniform data, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the size of uniform data. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long? Size { get; }
+    public long Size { get; }
 
     /// <summary>
-    /// Gets the stride between uniform elements, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the stride between uniform elements. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long? ElementStride { get; }
+    public long ElementStride { get; }
 
     /// <summary>
-    /// Gets the binding space, or <c>null</c> for uniform data. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the binding space. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long? Space { get; }
+    public long Space { get; }
 
     /// <summary>
-    /// Gets the binding index, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the binding index. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long? Index { get; }
+    public long Index { get; }
 
     /// <summary>
-    /// Gets the number of bound elements, or <c>null</c> for uniform data. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the number of bound elements. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long? Count { get; }
+    public long Count { get; }
 
     /// <summary>
-    /// Gets whether this binding is used by the shader, or <c>null</c> when Slang did not emit usage information.
+    /// Gets whether this binding is used by the shader.
     /// </summary>
-    public bool? Used { get; }
+    public bool Used { get; }
 }

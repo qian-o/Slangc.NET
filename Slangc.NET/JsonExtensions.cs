@@ -61,28 +61,34 @@ internal static partial class JsonExtensions
     {
         if (node is null)
         {
-            return default!;
+            return GetDefault<T>();
         }
 
         try
         {
-            return (T)node.Deserialize(typeof(T), context)!;
+            object? value = node.Deserialize(typeof(T), context);
+            return value is null ? GetDefault<T>() : (T)value;
         }
         catch (JsonException)
         {
-            return default!;
+            return GetDefault<T>();
         }
         catch (NotSupportedException)
         {
-            return default!;
+            return GetDefault<T>();
         }
+    }
+
+    private static T GetDefault<T>()
+    {
+        return typeof(T) == typeof(string) ? (T)(object)string.Empty : default!;
     }
 
     public static long DeserializeSize(this JsonNode? node)
     {
         if (node is null)
         {
-            throw new JsonException("Expected a size value.");
+            return 0;
         }
 
         if (node.GetValueKind() is JsonValueKind.String)

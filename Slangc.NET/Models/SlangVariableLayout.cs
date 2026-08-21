@@ -22,9 +22,9 @@ public class SlangVariableLayout
     }
 
     /// <summary>
-    /// Gets the variable name, when emitted.
+    /// Gets the variable name, or an empty string when not emitted.
     /// </summary>
-    public string? Name { get; }
+    public string Name { get; }
 
     /// <summary>
     /// Gets all binding points associated with this layout.
@@ -39,7 +39,7 @@ public class SlangVariableLayout
     /// <summary>
     /// Gets the semantic name associated with this layout, when applicable.
     /// </summary>
-    public string? SemanticName { get; }
+    public string SemanticName { get; }
 
     /// <summary>
     /// Gets the semantic index associated with this layout.
@@ -49,5 +49,5 @@ public class SlangVariableLayout
     /// <summary>
     /// Gets the image format associated with this layout, when available.
     /// </summary>
-    public string? Format { get; }
+    public string Format { get; }
 }

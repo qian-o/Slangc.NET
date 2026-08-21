@@ -84,7 +84,7 @@ public unsafe partial class SlangReflection
             {
                 JsonObject reader = JsonNode.Parse(Json)!.AsObject();
 
-                string version = reader["version"].Deserialize<string>() ?? "1.0";
+                string version = reader.ContainsKey("version") ? reader["version"].Deserialize<string>() : "1.0";
                 SlangScope? globalScope = reader.ContainsKey("globalScope") ? new(reader["globalScope"]!.AsObject()) : null;
                 SlangParameter[] parameters = reader.ContainsKey("parameters") ? [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))] : [];
                 SlangEntryPoint[] entryPoints = reader.ContainsKey("entryPoints") ? [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))] : [];
@@ -119,7 +119,7 @@ public unsafe partial class SlangReflection
     /// <summary>
     /// Gets the complete global parameter scope, when the JSON contains one.
     /// </summary>
-    public SlangScope? GlobalScope => deserialized?.Value.GlobalScope;
+    public SlangScope GlobalScope => deserialized?.Value.GlobalScope!;
 
     /// <summary>
     /// Gets the array of shader parameters parsed from the reflection data.

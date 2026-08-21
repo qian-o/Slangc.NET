@@ -25,9 +25,9 @@ public class SlangParameter
     }
 
     /// <summary>
-    /// Gets the name of the parameter, when emitted.
+    /// Gets the name of the parameter, or an empty string when not emitted.
     /// </summary>
-    public string? Name { get; }
+    public string Name { get; }
 
     /// <summary>
     /// Gets the user-defined attributes associated with this parameter.
@@ -57,7 +57,7 @@ public class SlangParameter
     /// <summary>
     /// Gets the semantic name associated with this parameter, when applicable.
     /// </summary>
-    public string? SemanticName { get; }
+    public string SemanticName { get; }
 
     /// <summary>
     /// Gets the semantic index associated with this parameter.
@@ -67,5 +67,5 @@ public class SlangParameter
     /// <summary>
     /// Gets the image format associated with this parameter, when available.
     /// </summary>
-    public string? Format { get; }
+    public string Format { get; }
 }
