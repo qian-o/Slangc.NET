@@ -25,9 +25,9 @@ public class SlangVar
     }
 
     /// <summary>
-    /// Gets the name of the variable.
+    /// Gets the name of the variable, when emitted.
     /// </summary>
-    public string Name { get; }
+    public string? Name { get; }
 
     /// <summary>
     /// Gets the reflected variable type.

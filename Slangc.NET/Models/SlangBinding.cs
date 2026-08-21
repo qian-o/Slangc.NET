@@ -14,12 +14,20 @@ public class SlangBinding
     internal SlangBinding(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangParameterCategory>();
-        Offset = reader["offset"].DeserializeSize();
-        Size = reader["size"].DeserializeSize();
-        ElementStride = reader["elementStride"].DeserializeSize();
-        Space = reader["space"].DeserializeSize();
-        Index = reader["index"].DeserializeSize();
-        Count = reader.ContainsKey("count") ? reader["count"].DeserializeSize() : 1;
+
+        if (Kind is SlangParameterCategory.Uniform)
+        {
+            Offset = reader["offset"].DeserializeSize();
+            Size = reader["size"].DeserializeSize();
+            ElementStride = reader["elementStride"].DeserializeSize();
+        }
+        else
+        {
+            Space = reader.ContainsKey("space") ? reader["space"].DeserializeSize() : 0;
+            Index = reader["index"].DeserializeSize();
+            Count = reader.ContainsKey("count") ? reader["count"].DeserializeSize() : 1;
+        }
+
         Used = reader.ContainsKey("used") ? reader["used"].Deserialize<bool>() : null;
     }
 
@@ -29,34 +37,34 @@ public class SlangBinding
     public SlangParameterCategory Kind { get; }
 
     /// <summary>
-    /// Gets the offset within the binding space. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the offset within uniform data, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long Offset { get; }
+    public long? Offset { get; }
 
     /// <summary>
-    /// Gets the size of the binding in bytes. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the size of uniform data, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long Size { get; }
+    public long? Size { get; }
 
     /// <summary>
-    /// Gets the stride between elements in this binding. A value of -1 is unbounded; -2 is unknown.
+    /// Gets the stride between uniform elements, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long ElementStride { get; }
+    public long? ElementStride { get; }
 
     /// <summary>
-    /// Gets the binding space (register space in DirectX terminology). A value of -1 is unbounded; -2 is unknown.
+    /// Gets the binding space, or <c>null</c> for uniform data. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long Space { get; }
+    public long? Space { get; }
 
     /// <summary>
-    /// Gets the binding index (register number in DirectX terminology). A value of -1 is unbounded; -2 is unknown.
+    /// Gets the binding index, or <c>null</c> when not applicable. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long Index { get; }
+    public long? Index { get; }
 
     /// <summary>
-    /// Gets the number of elements in this binding (for arrays). A value of -1 is unbounded; -2 is unknown.
+    /// Gets the number of bound elements, or <c>null</c> for uniform data. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long Count { get; }
+    public long? Count { get; }
 
     /// <summary>
     /// Gets whether this binding is used by the shader, or <c>null</c> when Slang did not emit usage information.

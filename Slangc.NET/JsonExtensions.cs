@@ -9,7 +9,7 @@ namespace Slangc.NET;
 /// </summary>
 internal static partial class JsonExtensions
 {
-    private class NumberToBooleanConverter : JsonConverter<bool>
+    private sealed class NumberToBooleanConverter : JsonConverter<bool>
     {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -20,7 +20,12 @@ internal static partial class JsonExtensions
 
             if (reader.TokenType is JsonTokenType.Number)
             {
-                return reader.GetUInt64() is not 0;
+                if (reader.TryGetUInt64(out ulong value) && value is 0 or 1)
+                {
+                    return value is 1;
+                }
+
+                throw new JsonException("Expected 0 or 1 when parsing boolean.");
             }
 
             throw new JsonException($"Unexpected token {reader.TokenType} when parsing boolean.");
@@ -28,7 +33,7 @@ internal static partial class JsonExtensions
 
         public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
         {
-            writer.WriteNumberValue(value ? 1 : 0);
+            writer.WriteBooleanValue(value);
         }
     }
 
@@ -63,7 +68,11 @@ internal static partial class JsonExtensions
         {
             return (T)node.Deserialize(typeof(T), context)!;
         }
-        catch (Exception)
+        catch (JsonException)
+        {
+            return default!;
+        }
+        catch (NotSupportedException)
         {
             return default!;
         }
@@ -71,17 +80,21 @@ internal static partial class JsonExtensions
 
     public static long DeserializeSize(this JsonNode? node)
     {
-        if (node?.GetValueKind() is JsonValueKind.String)
+        if (node is null)
         {
-            return node.Deserialize<string>() switch
+            throw new JsonException("Expected a size value.");
+        }
+
+        if (node.GetValueKind() is JsonValueKind.String)
+        {
+            return node.GetValue<string>() switch
             {
                 "unbounded" => -1,
                 "unknown" => -2,
-                string value => throw new JsonException($"Unexpected size value '{value}'."),
-                _ => throw new JsonException("Size value cannot be null.")
+                _ => -2
             };
         }
 
-        return node.Deserialize<long>();
+        return (long)node.Deserialize(typeof(long), context)!;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace Slangc.NET;
@@ -81,21 +80,14 @@ public unsafe partial class SlangReflection
 
         deserialized = new(() =>
         {
-            string version = "1.0";
-            SlangScope? globalScope = null;
-            SlangParameter[] parameters = [];
-            SlangEntryPoint[] entryPoints = [];
-
             try
             {
-                using JsonDocument document = JsonDocument.Parse(Json);
+                JsonObject reader = JsonNode.Parse(Json)!.AsObject();
 
-                JsonObject reader = JsonObject.Create(document.RootElement)!;
-
-                version = reader["version"].Deserialize<string>() ?? "1.0";
-                globalScope = reader.ContainsKey("globalScope") ? new(reader["globalScope"]!.AsObject()) : null;
-                parameters = reader.ContainsKey("parameters") ? [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))] : [];
-                entryPoints = reader.ContainsKey("entryPoints") ? [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))] : [];
+                string version = reader["version"].Deserialize<string>() ?? "1.0";
+                SlangScope? globalScope = reader.ContainsKey("globalScope") ? new(reader["globalScope"]!.AsObject()) : null;
+                SlangParameter[] parameters = reader.ContainsKey("parameters") ? [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))] : [];
+                SlangEntryPoint[] entryPoints = reader.ContainsKey("entryPoints") ? [.. reader["entryPoints"]!.AsArray().Select(static reader => new SlangEntryPoint(reader!.AsObject()))] : [];
 
                 for (int i = 0; i < entryPoints.Length && i < threadGroupSizes.Length; i++)
                 {
@@ -104,13 +96,13 @@ public unsafe partial class SlangReflection
                         entryPoints[i].ThreadGroupSize = threadGroupSizes[i];
                     }
                 }
+
+                return (version, globalScope, parameters, entryPoints);
             }
             catch
             {
-                // ignored
+                return ("1.0", null, [], []);
             }
-
-            return (version, globalScope, parameters, entryPoints);
         });
     }
 

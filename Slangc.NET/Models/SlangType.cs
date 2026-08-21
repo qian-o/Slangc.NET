@@ -34,9 +34,9 @@ public class SlangType
         public long ElementCount { get; } = reader["elementCount"].DeserializeSize();
 
         /// <summary>
-        /// Gets the stride (in bytes) of each element in the uniform buffer layout. A value of -1 is unbounded; -2 is unknown.
+        /// Gets the stride (in bytes) of each element in the uniform buffer layout, when emitted. A value of -1 is unbounded; -2 is unknown.
         /// </summary>
-        public long UniformStride { get; } = reader["uniformStride"].DeserializeSize();
+        public long? UniformStride { get; } = reader.ContainsKey("uniformStride") ? reader["uniformStride"].DeserializeSize() : null;
 
         /// <summary>
         /// Gets the type information for array elements.
@@ -71,9 +71,9 @@ public class SlangType
     public class VectorProperties(JsonObject reader)
     {
         /// <summary>
-        /// Gets the number of components in the vector.
+        /// Gets the number of components in the vector. A value of -1 is unbounded; -2 is unknown.
         /// </summary>
-        public uint ElementCount { get; } = reader["elementCount"].Deserialize<uint>();
+        public long ElementCount { get; } = reader["elementCount"].DeserializeSize();
 
         /// <summary>
         /// Gets the scalar type information for vector components.

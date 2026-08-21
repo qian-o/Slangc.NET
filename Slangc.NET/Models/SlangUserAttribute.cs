@@ -14,14 +14,14 @@ public class SlangUserAttribute
     public class Argument(JsonValue value)
     {
         /// <summary>
-        /// Gets the numeric value of the argument if it's a number, otherwise returns 0.0.
+        /// Gets the numeric value of the argument, or <c>null</c> when it is a string.
         /// </summary>
-        public double NumberValue { get; } = value.GetValueKind() is JsonValueKind.Number ? value.Deserialize<double>() : 0.0;
+        public double? NumberValue { get; } = value.GetValueKind() is JsonValueKind.Number ? value.Deserialize<double>() : null;
 
         /// <summary>
-        /// Gets the string value of the argument if it's a string, otherwise returns an empty string.
+        /// Gets the string value of the argument, or <c>null</c> when it is a number.
         /// </summary>
-        public string StringValue { get; } = value.GetValueKind() is JsonValueKind.String ? value.Deserialize<string>() : string.Empty;
+        public string? StringValue { get; } = value.GetValueKind() is JsonValueKind.String ? value.Deserialize<string>() : null;
     }
 
     /// <summary>

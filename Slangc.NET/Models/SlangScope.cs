@@ -14,7 +14,7 @@ public class SlangScope
     internal SlangScope(JsonObject reader)
     {
         Kind = reader["kind"].Deserialize<SlangScopeKind>();
-        Binding = reader.ContainsKey("binding") ? new(reader["binding"]!.AsObject()) : null;
+        Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : reader.ContainsKey("binding") ? [new(reader["binding"]!.AsObject())] : [];
         Parameters = reader.ContainsKey("parameters") ? [.. reader["parameters"]!.AsArray().Select(static reader => new SlangParameter(reader!.AsObject()))] : [];
     }
 
@@ -24,9 +24,9 @@ public class SlangScope
     public SlangScopeKind Kind { get; }
 
     /// <summary>
-    /// Gets the binding owned by an implicitly introduced container, if any.
+    /// Gets the bindings owned by an implicitly introduced container.
     /// </summary>
-    public SlangBinding? Binding { get; }
+    public SlangBinding[] Bindings { get; }
 
     /// <summary>
     /// Gets the parameters contained by this scope.

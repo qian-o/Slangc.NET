@@ -15,7 +15,7 @@ public class SlangTypeSize
     {
         Kind = reader["kind"].Deserialize<SlangParameterCategory>();
         Value = reader["value"].DeserializeSize();
-        Alignment = reader["alignment"].DeserializeSize();
+        Alignment = reader.ContainsKey("alignment") ? reader["alignment"].DeserializeSize() : null;
     }
 
     /// <summary>
@@ -31,5 +31,5 @@ public class SlangTypeSize
     /// <summary>
     /// Gets the alignment when emitted for this layout unit. A value of -1 is unbounded; -2 is unknown.
     /// </summary>
-    public long Alignment { get; }
+    public long? Alignment { get; }
 }

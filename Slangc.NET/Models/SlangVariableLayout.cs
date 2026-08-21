@@ -13,12 +13,18 @@ public class SlangVariableLayout
     /// <param name="reader">JSON object containing variable layout information.</param>
     internal SlangVariableLayout(JsonObject reader)
     {
+        Name = reader["name"].Deserialize<string>();
         Bindings = reader.ContainsKey("bindings") ? [.. reader["bindings"]!.AsArray().Select(static reader => new SlangBinding(reader!.AsObject()))] : reader.ContainsKey("binding") ? [new(reader["binding"]!.AsObject())] : [];
         Stage = reader["stage"].Deserialize<SlangStage>();
         SemanticName = reader["semanticName"].Deserialize<string>();
         SemanticIndex = reader["semanticIndex"].Deserialize<uint>();
         Format = reader["format"].Deserialize<string>();
     }
+
+    /// <summary>
+    /// Gets the variable name, when emitted.
+    /// </summary>
+    public string? Name { get; }
 
     /// <summary>
     /// Gets all binding points associated with this layout.

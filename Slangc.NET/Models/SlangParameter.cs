@@ -25,9 +25,9 @@ public class SlangParameter
     }
 
     /// <summary>
-    /// Gets the name of the parameter.
+    /// Gets the name of the parameter, when emitted.
     /// </summary>
-    public string Name { get; }
+    public string? Name { get; }
 
     /// <summary>
     /// Gets the user-defined attributes associated with this parameter.
