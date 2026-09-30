@@ -1,0 +1,10 @@
+﻿<Solution>
+  <Folder Name="/Solution Items/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Example/Example.csproj" />
+  <Project Path="Slangc.NET/Slangc.NET.csproj" />
+</Solution>
